@@ -16,8 +16,8 @@ const ResumeExport: React.FC<ResumeExportProps> = ({ iconOnly = false }) => {
 
   const handleExport = () => {
     try {
-      // Get the resume preview element
-      const element = document.querySelector(".resume-preview");
+      // Get the resume preview element and cast it as HTMLElement
+      const element = document.querySelector(".resume-preview") as HTMLElement;
       
       if (!element) {
         throw new Error("Could not find resume preview element");
