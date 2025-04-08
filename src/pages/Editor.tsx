@@ -6,6 +6,7 @@ import PersonalInfoForm from "@/components/editor/PersonalInfoForm";
 import ExperienceForm from "@/components/editor/ExperienceForm";
 import EducationForm from "@/components/editor/EducationForm";
 import SkillsForm from "@/components/editor/SkillsForm";
+import CustomSectionsForm from "@/components/editor/CustomSectionsForm";
 import ResumePreview from "@/components/resume/ResumePreview";
 import ResumeExport from "@/components/editor/ResumeExport";
 import { useResume } from "@/contexts/ResumeContext";
@@ -44,11 +45,12 @@ const Editor = () => {
                 onValueChange={handleTabChange}
                 className="w-full"
               >
-                <TabsList className="grid grid-cols-4 mb-6">
+                <TabsList className="grid grid-cols-5 mb-6">
                   <TabsTrigger value="personal">Personal</TabsTrigger>
                   <TabsTrigger value="experience">Experience</TabsTrigger>
                   <TabsTrigger value="education">Education</TabsTrigger>
                   <TabsTrigger value="skills">Skills</TabsTrigger>
+                  <TabsTrigger value="custom">Custom</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="personal">
@@ -65,6 +67,10 @@ const Editor = () => {
                 
                 <TabsContent value="skills">
                   <SkillsForm />
+                </TabsContent>
+                
+                <TabsContent value="custom">
+                  <CustomSectionsForm />
                 </TabsContent>
               </Tabs>
             </CardContent>

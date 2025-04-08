@@ -1,8 +1,7 @@
-
 import React, { createContext, useState, useContext } from 'react';
 import { defaultTemplates } from '@/data/templates';
 
-export type ResumeSection = 'personal' | 'experience' | 'education' | 'skills';
+export type ResumeSection = 'personal' | 'experience' | 'education' | 'skills' | 'custom';
 
 export interface PersonalInfo {
   fullName: string;
@@ -40,11 +39,27 @@ export interface Skill {
   level: number;
 }
 
+export interface CustomSectionItem {
+  id: string;
+  title: string;
+  location?: string;
+  startDate?: string;
+  endDate?: string;
+  description?: string;
+}
+
+export interface CustomSection {
+  id: string;
+  title: string;
+  items: CustomSectionItem[];
+}
+
 export interface Resume {
   personal: PersonalInfo;
   experience: Experience[];
   education: Education[];
   skills: Skill[];
+  customSections: CustomSection[];
   selectedTemplate: string;
 }
 
@@ -61,6 +76,7 @@ const defaultResume: Resume = {
   experience: [],
   education: [],
   skills: [],
+  customSections: [],
   selectedTemplate: defaultTemplates[0].id,
 };
 
@@ -76,6 +92,12 @@ interface ResumeContextType {
   addSkill: (skill: Omit<Skill, 'id'>) => void;
   updateSkill: (id: string, skill: Partial<Skill>) => void;
   removeSkill: (id: string) => void;
+  addCustomSection: (title: string) => void;
+  updateCustomSection: (id: string, title: string) => void;
+  removeCustomSection: (id: string) => void;
+  addCustomSectionItem: (sectionId: string, item: Omit<CustomSectionItem, 'id'>) => void;
+  updateCustomSectionItem: (sectionId: string, itemId: string, item: Partial<CustomSectionItem>) => void;
+  removeCustomSectionItem: (sectionId: string, itemId: string) => void;
   setSelectedTemplate: (templateId: string) => void;
 }
 
@@ -170,6 +192,67 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }));
   };
 
+  const addCustomSection = (title: string) => {
+    const id = crypto.randomUUID();
+    setResume(prev => ({
+      ...prev,
+      customSections: [...prev.customSections, { id, title, items: [] }],
+    }));
+  };
+
+  const updateCustomSection = (id: string, title: string) => {
+    setResume(prev => ({
+      ...prev,
+      customSections: prev.customSections.map(section => 
+        section.id === id ? { ...section, title } : section
+      ),
+    }));
+  };
+
+  const removeCustomSection = (id: string) => {
+    setResume(prev => ({
+      ...prev,
+      customSections: prev.customSections.filter(section => section.id !== id),
+    }));
+  };
+
+  const addCustomSectionItem = (sectionId: string, item: Omit<CustomSectionItem, 'id'>) => {
+    const id = crypto.randomUUID();
+    setResume(prev => ({
+      ...prev,
+      customSections: prev.customSections.map(section => 
+        section.id === sectionId 
+          ? { ...section, items: [...section.items, { ...item, id }] } 
+          : section
+      ),
+    }));
+  };
+
+  const updateCustomSectionItem = (sectionId: string, itemId: string, item: Partial<CustomSectionItem>) => {
+    setResume(prev => ({
+      ...prev,
+      customSections: prev.customSections.map(section => 
+        section.id === sectionId 
+          ? { 
+              ...section, 
+              items: section.items.map(i => i.id === itemId ? { ...i, ...item } : i) 
+            } 
+          : section
+      ),
+    }));
+  };
+
+  const removeCustomSectionItem = (sectionId: string, itemId: string) => {
+    setResume(prev => ({
+      ...prev,
+      customSections: prev.customSections.map(section => 
+        section.id === sectionId 
+          ? { ...section, items: section.items.filter(i => i.id !== itemId) }
+          : section
+      ),
+    }));
+  };
+
   const setSelectedTemplate = (templateId: string) => {
     setResume(prev => ({
       ...prev,
@@ -190,6 +273,12 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       addSkill,
       updateSkill,
       removeSkill,
+      addCustomSection,
+      updateCustomSection,
+      removeCustomSection,
+      addCustomSectionItem,
+      updateCustomSectionItem,
+      removeCustomSectionItem,
       setSelectedTemplate,
     }}>
       {children}
