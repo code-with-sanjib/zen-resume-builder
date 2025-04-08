@@ -27,8 +27,8 @@ const ResumePreview = () => {
     return (
       <>
         {templateContent}
-        {/* Add custom sections at the bottom of any template */}
-        {resume.customSections.length > 0 && (
+        {/* Add custom sections at the bottom of any template - with null check */}
+        {resume.customSections && resume.customSections.length > 0 && (
           <div className="mt-4 px-6">
             <CustomSections customSections={resume.customSections} />
           </div>
