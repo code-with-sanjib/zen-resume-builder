@@ -121,8 +121,8 @@ const CustomSectionsForm = () => {
 
   return (
     <div className="space-y-6">
-      {/* Existing custom sections */}
-      {resume.customSections.length > 0 && (
+      {/* Existing custom sections - Adding null check here */}
+      {resume.customSections && resume.customSections.length > 0 && (
         <Accordion type="multiple" className="space-y-4">
           {resume.customSections.map((section) => (
             <AccordionItem key={section.id} value={section.id} className="border border-gray-200 rounded-lg overflow-hidden">
@@ -177,9 +177,9 @@ const CustomSectionsForm = () => {
               </AccordionTrigger>
               
               <AccordionContent className="px-4 pb-4">
-                {/* Items in this section */}
+                {/* Items in this section - Adding null check here */}
                 <div className="space-y-4">
-                  {section.items.map((item) => (
+                  {section.items && section.items.length > 0 && section.items.map((item) => (
                     <Collapsible key={item.id} className="border border-gray-100 rounded-md overflow-hidden">
                       <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-gray-50 hover:bg-gray-100">
                         <span>{item.title || "(Not specified)"}</span>
