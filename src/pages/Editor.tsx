@@ -11,7 +11,7 @@ import ResumeExport from "@/components/editor/ResumeExport";
 import { useResume } from "@/contexts/ResumeContext";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { FileSparkles } from "lucide-react";
+import { FileText, Sparkles } from "lucide-react";
 
 const Editor = () => {
   const [activeTab, setActiveTab] = useState<string>("personal");
@@ -30,7 +30,8 @@ const Editor = () => {
             <h1 className="text-2xl font-bold">Resume Editor</h1>
             <Link to="/templates">
               <Button variant="outline" size="sm">
-                <FileSparkles className="mr-2 h-4 w-4" />
+                <FileText className="mr-2 h-4 w-4" />
+                <Sparkles className="mr-2 h-4 w-4" />
                 Change Template
               </Button>
             </Link>
