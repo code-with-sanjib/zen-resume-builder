@@ -1,128 +1,69 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { Download, FileType2, ImageIcon } from "lucide-react";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import { useToast } from "@/hooks/use-toast";
+import { Download } from "lucide-react";
+import { useResume } from "@/contexts/ResumeContext";
+import jsPDF from "jspdf";
 
-const ResumeExport = () => {
+interface ResumeExportProps {
+  iconOnly?: boolean;
+}
+
+const ResumeExport: React.FC<ResumeExportProps> = ({ iconOnly = false }) => {
   const { toast } = useToast();
+  const { resume } = useResume();
 
-  const exportAsPDF = async () => {
-    const resumeElement = document.querySelector(".resume-preview");
-    if (!resumeElement) return;
-
-    toast({
-      title: "Generating PDF",
-      description: "Please wait while we create your PDF...",
-    });
-
+  const handleExport = () => {
     try {
-      const canvas = await html2canvas(resumeElement as HTMLElement, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-      });
+      // Get the resume preview element
+      const element = document.querySelector(".resume-preview");
       
-      const imgData = canvas.toDataURL("image/png");
+      if (!element) {
+        throw new Error("Could not find resume preview element");
+      }
+
+      // Create a new jsPDF instance
       const pdf = new jsPDF({
         orientation: "portrait",
-        unit: "px",
-        format: [595, 842], // A4 size in pixels at 72 DPI
+        unit: "pt",
+        format: "a4",
       });
-      
-      const imgWidth = 595;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
-      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-      pdf.save("resume.pdf");
-      
-      toast({
-        title: "PDF Download Complete",
-        description: "Your resume has been downloaded as a PDF file.",
+
+      // Convert the element to PDF
+      pdf.html(element, {
+        callback: function (pdf) {
+          // Save the PDF
+          pdf.save(`${resume.personal.fullName || "resume"}.pdf`);
+          
+          // Show success toast
+          toast({
+            title: "Resume exported",
+            description: "Your resume has been exported to PDF",
+          });
+        },
+        x: 0,
+        y: 0,
+        width: 595, // A4 width in points
+        windowWidth: 595,
       });
     } catch (error) {
-      console.error("PDF generation failed:", error);
+      console.error("Error exporting resume:", error);
+      
+      // Show error toast
       toast({
-        title: "Export Failed",
-        description: "There was an error generating your PDF. Please try again.",
+        title: "Export failed",
+        description: "Could not export resume to PDF. Please try again.",
         variant: "destructive",
       });
     }
-  };
-
-  const exportAsImage = async () => {
-    const resumeElement = document.querySelector(".resume-preview");
-    if (!resumeElement) return;
-
-    toast({
-      title: "Generating Image",
-      description: "Please wait while we create your image...",
-    });
-
-    try {
-      const canvas = await html2canvas(resumeElement as HTMLElement, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-      });
-      
-      const link = document.createElement("a");
-      link.download = "resume.png";
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-      
-      toast({
-        title: "Image Download Complete",
-        description: "Your resume has been downloaded as an image file.",
-      });
-    } catch (error) {
-      console.error("Image generation failed:", error);
-      toast({
-        title: "Export Failed",
-        description: "There was an error generating your image. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const exportAsWordDoc = () => {
-    toast({
-      title: "Coming Soon",
-      description: "Word document export will be available in a future update.",
-    });
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button>
-          <Download className="mr-2 h-4 w-4" />
-          Export Resume
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={exportAsPDF}>
-          <Download className="mr-2 h-4 w-4" />
-          Download as PDF
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={exportAsWordDoc}>
-          <FileType2 className="mr-2 h-4 w-4" />
-          Download as Word
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={exportAsImage}>
-          <ImageIcon className="mr-2 h-4 w-4" />
-          Download as Image
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Button onClick={handleExport} variant={iconOnly ? "ghost" : "default"} size={iconOnly ? "icon" : "default"} className={iconOnly ? "rounded-full" : ""}>
+      <Download className={`${iconOnly ? "w-5 h-5" : "mr-2 w-4 h-4"}`} />
+      {!iconOnly && "Export PDF"}
+    </Button>
   );
 };
 
