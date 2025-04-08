@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext } from 'react';
 import { defaultTemplates } from '@/data/templates';
 
@@ -98,6 +99,7 @@ interface ResumeContextType {
   addCustomSectionItem: (sectionId: string, item: Omit<CustomSectionItem, 'id'>) => void;
   updateCustomSectionItem: (sectionId: string, itemId: string, item: Partial<CustomSectionItem>) => void;
   removeCustomSectionItem: (sectionId: string, itemId: string) => void;
+  reorderCustomSectionItems: (sectionId: string, items: CustomSectionItem[]) => void;
   setSelectedTemplate: (templateId: string) => void;
 }
 
@@ -253,6 +255,18 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }));
   };
 
+  // Add the missing reorderCustomSectionItems function
+  const reorderCustomSectionItems = (sectionId: string, items: CustomSectionItem[]) => {
+    setResume(prev => ({
+      ...prev,
+      customSections: prev.customSections.map(section => 
+        section.id === sectionId 
+          ? { ...section, items } 
+          : section
+      ),
+    }));
+  };
+
   const setSelectedTemplate = (templateId: string) => {
     setResume(prev => ({
       ...prev,
@@ -279,6 +293,7 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       addCustomSectionItem,
       updateCustomSectionItem,
       removeCustomSectionItem,
+      reorderCustomSectionItems,
       setSelectedTemplate,
     }}>
       {children}
