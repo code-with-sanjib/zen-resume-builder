@@ -10,47 +10,74 @@
 }
 
 /* Rich text content styles */
-.rich-text-content {
+.rich-text-content,
+.ProseMirror {
   line-height: 1.5;
 }
 
-.rich-text-content p {
+.rich-text-content p,
+.ProseMirror p {
   margin-bottom: 0.75em;
 }
 
 .rich-text-content ul,
-.rich-text-content ol {
-  margin-left: 1.25em;
+.rich-text-content ol,
+.ProseMirror ul,
+.ProseMirror ol {
+  margin-left: 1.5em;
   margin-bottom: 0.75em;
 }
 
-.rich-text-content ul {
+.rich-text-content ul,
+.ProseMirror ul {
   list-style-type: disc;
 }
 
-.rich-text-content ol {
+.rich-text-content ol,
+.ProseMirror ol {
   list-style-type: decimal;
 }
 
-.rich-text-content a {
+.rich-text-content li,
+.ProseMirror li {
+  margin-bottom: 0.25em;
+}
+
+.rich-text-content a,
+.ProseMirror a {
   color: #2563eb;
   text-decoration: underline;
 }
 
-.rich-text-content strong {
+.rich-text-content strong,
+.ProseMirror strong {
   font-weight: 600;
 }
 
-.rich-text-content em {
+.rich-text-content em,
+.ProseMirror em {
   font-style: italic;
 }
 
-.rich-text-content u {
+.rich-text-content u,
+.ProseMirror u {
   text-decoration: underline;
 }
 
-.rich-text-content s {
+.rich-text-content s,
+.ProseMirror s {
   text-decoration: line-through;
 }
 
-/* Add the import to your main CSS file or index.css */
+/* TipTap specifics */
+.ProseMirror:focus {
+  outline: none;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}

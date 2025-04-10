@@ -86,6 +86,14 @@ const RichTextEditor = ({
     editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
   }
 
+  // Create a reusable function for determining button active state
+  const isActive = (type: string) => {
+    if (editor.isActive(type)) {
+      return 'bg-muted'
+    }
+    return ''
+  }
+
   return (
     <div className="rich-text-editor">
       <div className="border border-input bg-background rounded-t-md border-b-0 p-1 flex flex-wrap gap-1">
@@ -94,7 +102,7 @@ const RichTextEditor = ({
           variant="ghost"
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={editor.isActive('bold') ? 'bg-muted' : ''}
+          className={isActive('bold')}
         >
           <Bold className="h-4 w-4" />
         </Button>
@@ -103,7 +111,7 @@ const RichTextEditor = ({
           variant="ghost"
           type="button"
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={editor.isActive('italic') ? 'bg-muted' : ''}
+          className={isActive('italic')}
         >
           <Italic className="h-4 w-4" />
         </Button>
@@ -112,7 +120,7 @@ const RichTextEditor = ({
           variant="ghost"
           type="button"
           onClick={() => editor.chain().focus().toggleMark('underline').run()}
-          className={editor.isActive('underline') ? 'bg-muted' : ''}
+          className={isActive('underline')}
         >
           <UnderlineIcon className="h-4 w-4" />
         </Button>
@@ -121,7 +129,7 @@ const RichTextEditor = ({
           variant="ghost"
           type="button"
           onClick={() => editor.chain().focus().toggleStrike().run()}
-          className={editor.isActive('strike') ? 'bg-muted' : ''}
+          className={isActive('strike')}
         >
           <Strikethrough className="h-4 w-4" />
         </Button>
@@ -130,7 +138,8 @@ const RichTextEditor = ({
           variant="ghost"
           type="button"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={editor.isActive('bulletList') ? 'bg-muted' : ''}
+          className={isActive('bulletList')}
+          aria-label="Unordered list"
         >
           <List className="h-4 w-4" />
         </Button>
@@ -139,7 +148,8 @@ const RichTextEditor = ({
           variant="ghost"
           type="button"
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={editor.isActive('orderedList') ? 'bg-muted' : ''}
+          className={isActive('orderedList')}
+          aria-label="Ordered list"
         >
           <ListOrdered className="h-4 w-4" />
         </Button>
@@ -148,7 +158,7 @@ const RichTextEditor = ({
           variant="ghost"
           type="button"
           onClick={setLink}
-          className={editor.isActive('link') ? 'bg-muted' : ''}
+          className={isActive('link')}
         >
           <LinkIcon className="h-4 w-4" />
         </Button>
