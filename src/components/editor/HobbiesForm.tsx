@@ -4,10 +4,10 @@ import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { Plus, Trash2, GripVertical, Heart } from "lucide-react";
-import MDEditor from "@uiw/react-md-editor";
 
 const HobbiesForm = () => {
   const { resume, addHobby, updateHobby, removeHobby, reorderHobbies } = useResume();
@@ -79,14 +79,11 @@ const HobbiesForm = () => {
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
-                <MDEditor
+                <Input
+                  id="description"
                   value={newHobby.description}
-                  onChange={(value) => setNewHobby({ ...newHobby, description: value || "" })}
-                  preview="edit"
-                  height={200}
-                  textareaProps={{
-                    placeholder: "e.g. Photography, Reading, Hiking, etc. You can use **markdown** for formatting!"
-                  }}
+                  onChange={(e) => setNewHobby({ ...newHobby, description: e.target.value })}
+                  placeholder="e.g. Photography, Reading, Hiking, etc."
                 />
               </div>
               

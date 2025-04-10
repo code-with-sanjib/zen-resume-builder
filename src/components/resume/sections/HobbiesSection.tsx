@@ -20,7 +20,7 @@ const HobbiesSection: React.FC<HobbiesSectionProps> = ({ hobbies }) => {
             key={hobby.id}
             className="bg-gray-100 rounded-full px-3 py-1 text-sm"
           >
-            <ReactMarkdown>{hobby.description}</ReactMarkdown>
+            {hobby.description}
           </div>
         ))}
       </div>
