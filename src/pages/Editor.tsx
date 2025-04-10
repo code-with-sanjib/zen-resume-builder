@@ -5,7 +5,13 @@ import PersonalInfoForm from "@/components/editor/PersonalInfoForm";
 import ExperienceForm from "@/components/editor/ExperienceForm";
 import EducationForm from "@/components/editor/EducationForm";
 import SkillsForm from "@/components/editor/SkillsForm";
-import CustomSectionsForm from "@/components/editor/CustomSectionsForm";
+import ExtracurricularForm from "@/components/editor/ExtracurricularForm";
+import ReferencesForm from "@/components/editor/ReferencesForm";
+import InternshipsForm from "@/components/editor/InternshipsForm";
+import LanguagesForm from "@/components/editor/LanguagesForm";
+import HobbiesForm from "@/components/editor/HobbiesForm";
+import CoursesForm from "@/components/editor/CoursesForm";
+import ProjectsForm from "@/components/editor/ProjectsForm";
 import ResumePreview from "@/components/resume/ResumePreview";
 import ResumeExport from "@/components/editor/ResumeExport";
 import { useResume } from "@/contexts/ResumeContext";
@@ -13,15 +19,19 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
   FileText, 
-  Sparkles, 
   User, 
   Briefcase, 
   GraduationCap, 
-  Code, 
-  PlusCircle,
+  Code,
+  Award,
+  Users,
+  BookOpen,
+  Languages,
+  Heart,
+  Bookmark,
+  FolderKanban,
   ChevronLeft,
   ChevronRight,
-  Download
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -41,8 +51,20 @@ const Editor = () => {
         return <EducationForm />;
       case "skills":
         return <SkillsForm />;
-      case "custom":
-        return <CustomSectionsForm />;
+      case "extracurricular":
+        return <ExtracurricularForm />;
+      case "references":
+        return <ReferencesForm />;
+      case "internships":
+        return <InternshipsForm />;
+      case "languages":
+        return <LanguagesForm />;
+      case "hobbies":
+        return <HobbiesForm />;
+      case "courses":
+        return <CoursesForm />;
+      case "projects":
+        return <ProjectsForm />;
       default:
         return <PersonalInfoForm />;
     }
@@ -113,11 +135,59 @@ const Editor = () => {
                 isMobile={isMobile}
               />
               <NavItem 
-                id="custom" 
-                label="Custom Sections" 
-                icon={<PlusCircle className="w-4 h-4" />}
-                active={activeSection === "custom"} 
-                onClick={() => setActiveSection("custom")}
+                id="extracurricular" 
+                label="Activities" 
+                icon={<Award className="w-4 h-4" />}
+                active={activeSection === "extracurricular"} 
+                onClick={() => setActiveSection("extracurricular")}
+                isMobile={isMobile}
+              />
+              <NavItem 
+                id="references" 
+                label="References" 
+                icon={<Users className="w-4 h-4" />}
+                active={activeSection === "references"} 
+                onClick={() => setActiveSection("references")}
+                isMobile={isMobile}
+              />
+              <NavItem 
+                id="internships" 
+                label="Internships" 
+                icon={<BookOpen className="w-4 h-4" />}
+                active={activeSection === "internships"} 
+                onClick={() => setActiveSection("internships")}
+                isMobile={isMobile}
+              />
+              <NavItem 
+                id="languages" 
+                label="Languages" 
+                icon={<Languages className="w-4 h-4" />}
+                active={activeSection === "languages"} 
+                onClick={() => setActiveSection("languages")}
+                isMobile={isMobile}
+              />
+              <NavItem 
+                id="hobbies" 
+                label="Hobbies" 
+                icon={<Heart className="w-4 h-4" />}
+                active={activeSection === "hobbies"} 
+                onClick={() => setActiveSection("hobbies")}
+                isMobile={isMobile}
+              />
+              <NavItem 
+                id="courses" 
+                label="Courses" 
+                icon={<Bookmark className="w-4 h-4" />}
+                active={activeSection === "courses"} 
+                onClick={() => setActiveSection("courses")}
+                isMobile={isMobile}
+              />
+              <NavItem 
+                id="projects" 
+                label="Projects" 
+                icon={<FolderKanban className="w-4 h-4" />}
+                active={activeSection === "projects"} 
+                onClick={() => setActiveSection("projects")}
                 isMobile={isMobile}
               />
             </div>
@@ -143,7 +213,13 @@ const Editor = () => {
                     {activeSection === "experience" && "Work Experience"}
                     {activeSection === "education" && "Education"}
                     {activeSection === "skills" && "Skills"}
-                    {activeSection === "custom" && "Custom Sections"}
+                    {activeSection === "extracurricular" && "Extracurricular Activities"}
+                    {activeSection === "references" && "References"}
+                    {activeSection === "internships" && "Internships"}
+                    {activeSection === "languages" && "Languages"}
+                    {activeSection === "hobbies" && "Hobbies & Interests"}
+                    {activeSection === "courses" && "Courses & Certifications"}
+                    {activeSection === "projects" && "Projects"}
                   </h3>
                   
                   {isMobile && (

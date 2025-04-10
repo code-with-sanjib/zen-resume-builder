@@ -1,8 +1,18 @@
-
 import React, { createContext, useState, useContext } from 'react';
 import { defaultTemplates } from '@/data/templates';
 
-export type ResumeSection = 'personal' | 'experience' | 'education' | 'skills' | 'custom';
+export type ResumeSection = 
+  | 'personal' 
+  | 'experience' 
+  | 'education' 
+  | 'skills' 
+  | 'extracurricular' 
+  | 'references' 
+  | 'internships' 
+  | 'languages' 
+  | 'hobbies' 
+  | 'courses' 
+  | 'projects';
 
 export interface PersonalInfo {
   fullName: string;
@@ -40,6 +50,61 @@ export interface Skill {
   level: number;
 }
 
+export interface ExtracurricularActivity {
+  id: string;
+  title: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+}
+
+export interface Reference {
+  id: string;
+  fullName: string;
+  company: string;
+  role: string;
+  email: string;
+  phone: string;
+}
+
+export interface Internship {
+  id: string;
+  jobTitle: string;
+  company: string;
+  startDate: string;
+  endDate: string;
+  current: boolean;
+  description: string;
+}
+
+export interface Language {
+  id: string;
+  name: string;
+  level: string;
+}
+
+export interface Hobby {
+  id: string;
+  description: string;
+}
+
+export interface Course {
+  id: string;
+  name: string;
+  institution: string;
+  startDate: string;
+  endDate: string;
+  certificateLink?: string;
+}
+
+export interface Project {
+  id: string;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+}
+
 export interface CustomSectionItem {
   id: string;
   title: string;
@@ -60,6 +125,13 @@ export interface Resume {
   experience: Experience[];
   education: Education[];
   skills: Skill[];
+  extracurricular: ExtracurricularActivity[];
+  references: Reference[];
+  internships: Internship[];
+  languages: Language[];
+  hobbies: Hobby[];
+  courses: Course[];
+  projects: Project[];
   customSections: CustomSection[];
   selectedTemplate: string;
 }
@@ -77,6 +149,13 @@ const defaultResume: Resume = {
   experience: [],
   education: [],
   skills: [],
+  extracurricular: [],
+  references: [],
+  internships: [],
+  languages: [],
+  hobbies: [],
+  courses: [],
+  projects: [],
   customSections: [],
   selectedTemplate: defaultTemplates[0].id,
 };
@@ -84,15 +163,54 @@ const defaultResume: Resume = {
 interface ResumeContextType {
   resume: Resume;
   updatePersonalInfo: (info: Partial<PersonalInfo>) => void;
+  
   addExperience: (experience: Omit<Experience, 'id'>) => void;
   updateExperience: (id: string, experience: Partial<Experience>) => void;
   removeExperience: (id: string) => void;
+  
   addEducation: (education: Omit<Education, 'id'>) => void;
   updateEducation: (id: string, education: Partial<Education>) => void;
   removeEducation: (id: string) => void;
+  
   addSkill: (skill: Omit<Skill, 'id'>) => void;
   updateSkill: (id: string, skill: Partial<Skill>) => void;
   removeSkill: (id: string) => void;
+  
+  addExtracurricular: (activity: Omit<ExtracurricularActivity, 'id'>) => void;
+  updateExtracurricular: (id: string, activity: Partial<ExtracurricularActivity>) => void;
+  removeExtracurricular: (id: string) => void;
+  reorderExtracurricular: (items: ExtracurricularActivity[]) => void;
+  
+  addReference: (reference: Omit<Reference, 'id'>) => void;
+  updateReference: (id: string, reference: Partial<Reference>) => void;
+  removeReference: (id: string) => void;
+  reorderReferences: (items: Reference[]) => void;
+  
+  addInternship: (internship: Omit<Internship, 'id'>) => void;
+  updateInternship: (id: string, internship: Partial<Internship>) => void;
+  removeInternship: (id: string) => void;
+  reorderInternships: (items: Internship[]) => void;
+  
+  addLanguage: (language: Omit<Language, 'id'>) => void;
+  updateLanguage: (id: string, language: Partial<Language>) => void;
+  removeLanguage: (id: string) => void;
+  reorderLanguages: (items: Language[]) => void;
+  
+  addHobby: (hobby: Omit<Hobby, 'id'>) => void;
+  updateHobby: (id: string, hobby: Partial<Hobby>) => void;
+  removeHobby: (id: string) => void;
+  reorderHobbies: (items: Hobby[]) => void;
+  
+  addCourse: (course: Omit<Course, 'id'>) => void;
+  updateCourse: (id: string, course: Partial<Course>) => void;
+  removeCourse: (id: string) => void;
+  reorderCourses: (items: Course[]) => void;
+  
+  addProject: (project: Omit<Project, 'id'>) => void;
+  updateProject: (id: string, project: Partial<Project>) => void;
+  removeProject: (id: string) => void;
+  reorderProjects: (items: Project[]) => void;
+  
   addCustomSection: (title: string) => void;
   updateCustomSection: (id: string, title: string) => void;
   removeCustomSection: (id: string) => void;
@@ -100,6 +218,7 @@ interface ResumeContextType {
   updateCustomSectionItem: (sectionId: string, itemId: string, item: Partial<CustomSectionItem>) => void;
   removeCustomSectionItem: (sectionId: string, itemId: string) => void;
   reorderCustomSectionItems: (sectionId: string, items: CustomSectionItem[]) => void;
+  
   setSelectedTemplate: (templateId: string) => void;
 }
 
@@ -194,6 +313,223 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }));
   };
 
+  const addExtracurricular = (activity: Omit<ExtracurricularActivity, 'id'>) => {
+    const id = crypto.randomUUID();
+    setResume(prev => ({
+      ...prev,
+      extracurricular: [...prev.extracurricular, { ...activity, id }],
+    }));
+  };
+
+  const updateExtracurricular = (id: string, activity: Partial<ExtracurricularActivity>) => {
+    setResume(prev => ({
+      ...prev,
+      extracurricular: prev.extracurricular.map(a => 
+        a.id === id ? { ...a, ...activity } : a
+      ),
+    }));
+  };
+
+  const removeExtracurricular = (id: string) => {
+    setResume(prev => ({
+      ...prev,
+      extracurricular: prev.extracurricular.filter(a => a.id !== id),
+    }));
+  };
+
+  const reorderExtracurricular = (items: ExtracurricularActivity[]) => {
+    setResume(prev => ({
+      ...prev,
+      extracurricular: items,
+    }));
+  };
+
+  const addReference = (reference: Omit<Reference, 'id'>) => {
+    const id = crypto.randomUUID();
+    setResume(prev => ({
+      ...prev,
+      references: [...prev.references, { ...reference, id }],
+    }));
+  };
+
+  const updateReference = (id: string, reference: Partial<Reference>) => {
+    setResume(prev => ({
+      ...prev,
+      references: prev.references.map(r => 
+        r.id === id ? { ...r, ...reference } : r
+      ),
+    }));
+  };
+
+  const removeReference = (id: string) => {
+    setResume(prev => ({
+      ...prev,
+      references: prev.references.filter(r => r.id !== id),
+    }));
+  };
+
+  const reorderReferences = (items: Reference[]) => {
+    setResume(prev => ({
+      ...prev,
+      references: items,
+    }));
+  };
+
+  const addInternship = (internship: Omit<Internship, 'id'>) => {
+    const id = crypto.randomUUID();
+    setResume(prev => ({
+      ...prev,
+      internships: [...prev.internships, { ...internship, id }],
+    }));
+  };
+
+  const updateInternship = (id: string, internship: Partial<Internship>) => {
+    setResume(prev => ({
+      ...prev,
+      internships: prev.internships.map(i => 
+        i.id === id ? { ...i, ...internship } : i
+      ),
+    }));
+  };
+
+  const removeInternship = (id: string) => {
+    setResume(prev => ({
+      ...prev,
+      internships: prev.internships.filter(i => i.id !== id),
+    }));
+  };
+
+  const reorderInternships = (items: Internship[]) => {
+    setResume(prev => ({
+      ...prev,
+      internships: items,
+    }));
+  };
+
+  const addLanguage = (language: Omit<Language, 'id'>) => {
+    const id = crypto.randomUUID();
+    setResume(prev => ({
+      ...prev,
+      languages: [...prev.languages, { ...language, id }],
+    }));
+  };
+
+  const updateLanguage = (id: string, language: Partial<Language>) => {
+    setResume(prev => ({
+      ...prev,
+      languages: prev.languages.map(l => 
+        l.id === id ? { ...l, ...language } : l
+      ),
+    }));
+  };
+
+  const removeLanguage = (id: string) => {
+    setResume(prev => ({
+      ...prev,
+      languages: prev.languages.filter(l => l.id !== id),
+    }));
+  };
+
+  const reorderLanguages = (items: Language[]) => {
+    setResume(prev => ({
+      ...prev,
+      languages: items,
+    }));
+  };
+
+  const addHobby = (hobby: Omit<Hobby, 'id'>) => {
+    const id = crypto.randomUUID();
+    setResume(prev => ({
+      ...prev,
+      hobbies: [...prev.hobbies, { ...hobby, id }],
+    }));
+  };
+
+  const updateHobby = (id: string, hobby: Partial<Hobby>) => {
+    setResume(prev => ({
+      ...prev,
+      hobbies: prev.hobbies.map(h => 
+        h.id === id ? { ...h, ...hobby } : h
+      ),
+    }));
+  };
+
+  const removeHobby = (id: string) => {
+    setResume(prev => ({
+      ...prev,
+      hobbies: prev.hobbies.filter(h => h.id !== id),
+    }));
+  };
+
+  const reorderHobbies = (items: Hobby[]) => {
+    setResume(prev => ({
+      ...prev,
+      hobbies: items,
+    }));
+  };
+
+  const addCourse = (course: Omit<Course, 'id'>) => {
+    const id = crypto.randomUUID();
+    setResume(prev => ({
+      ...prev,
+      courses: [...prev.courses, { ...course, id }],
+    }));
+  };
+
+  const updateCourse = (id: string, course: Partial<Course>) => {
+    setResume(prev => ({
+      ...prev,
+      courses: prev.courses.map(c => 
+        c.id === id ? { ...c, ...course } : c
+      ),
+    }));
+  };
+
+  const removeCourse = (id: string) => {
+    setResume(prev => ({
+      ...prev,
+      courses: prev.courses.filter(c => c.id !== id),
+    }));
+  };
+
+  const reorderCourses = (items: Course[]) => {
+    setResume(prev => ({
+      ...prev,
+      courses: items,
+    }));
+  };
+
+  const addProject = (project: Omit<Project, 'id'>) => {
+    const id = crypto.randomUUID();
+    setResume(prev => ({
+      ...prev,
+      projects: [...prev.projects, { ...project, id }],
+    }));
+  };
+
+  const updateProject = (id: string, project: Partial<Project>) => {
+    setResume(prev => ({
+      ...prev,
+      projects: prev.projects.map(p => 
+        p.id === id ? { ...p, ...project } : p
+      ),
+    }));
+  };
+
+  const removeProject = (id: string) => {
+    setResume(prev => ({
+      ...prev,
+      projects: prev.projects.filter(p => p.id !== id),
+    }));
+  };
+
+  const reorderProjects = (items: Project[]) => {
+    setResume(prev => ({
+      ...prev,
+      projects: items,
+    }));
+  };
+
   const addCustomSection = (title: string) => {
     const id = crypto.randomUUID();
     setResume(prev => ({
@@ -255,7 +591,6 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }));
   };
 
-  // Add the missing reorderCustomSectionItems function
   const reorderCustomSectionItems = (sectionId: string, items: CustomSectionItem[]) => {
     setResume(prev => ({
       ...prev,
@@ -287,6 +622,34 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       addSkill,
       updateSkill,
       removeSkill,
+      addExtracurricular,
+      updateExtracurricular,
+      removeExtracurricular,
+      reorderExtracurricular,
+      addReference,
+      updateReference,
+      removeReference,
+      reorderReferences,
+      addInternship,
+      updateInternship,
+      removeInternship,
+      reorderInternships,
+      addLanguage,
+      updateLanguage,
+      removeLanguage,
+      reorderLanguages,
+      addHobby,
+      updateHobby,
+      removeHobby,
+      reorderHobbies,
+      addCourse,
+      updateCourse,
+      removeCourse,
+      reorderCourses,
+      addProject,
+      updateProject,
+      removeProject,
+      reorderProjects,
       addCustomSection,
       updateCustomSection,
       removeCustomSection,
