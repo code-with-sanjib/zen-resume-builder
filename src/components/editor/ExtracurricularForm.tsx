@@ -60,12 +60,15 @@ const ExtracurricularForm = () => {
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
     
-    const items = Array.from(resume.extracurricular);
+    const items = Array.from(resume.extracurricular || []);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
     
     reorderExtracurricular(items);
   };
+
+  // Ensure extracurricular is an array even if it's undefined
+  const activities = resume.extracurricular || [];
 
   return (
     <div className="space-y-4">
@@ -173,7 +176,7 @@ const ExtracurricularForm = () => {
         </Card>
       )}
 
-      {resume.extracurricular.length > 0 && (
+      {activities.length > 0 && (
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="extracurricular-list">
             {(provided) => (
@@ -182,7 +185,7 @@ const ExtracurricularForm = () => {
                 ref={provided.innerRef}
                 className="space-y-3"
               >
-                {resume.extracurricular.map((activity, index) => (
+                {activities.map((activity, index) => (
                   <Draggable key={activity.id} draggableId={activity.id} index={index}>
                     {(provided) => (
                       <Card
@@ -230,7 +233,7 @@ const ExtracurricularForm = () => {
         </DragDropContext>
       )}
 
-      {resume.extracurricular.length === 0 && !isAdding && (
+      {activities.length === 0 && !isAdding && (
         <Card className="bg-muted/50 border-dashed">
           <CardContent className="py-8 flex flex-col items-center justify-center text-center">
             <p className="text-muted-foreground mb-2">No extracurricular activities added yet</p>

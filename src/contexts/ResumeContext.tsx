@@ -227,7 +227,25 @@ const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
 export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [resume, setResume] = useState<Resume>(() => {
     const saved = localStorage.getItem('resume');
-    return saved ? JSON.parse(saved) : defaultResume;
+    if (saved) {
+      const parsedResume = JSON.parse(saved);
+      return {
+        ...defaultResume,
+        ...parsedResume,
+        experience: parsedResume.experience || [],
+        education: parsedResume.education || [],
+        skills: parsedResume.skills || [],
+        extracurricular: parsedResume.extracurricular || [],
+        references: parsedResume.references || [],
+        internships: parsedResume.internships || [],
+        languages: parsedResume.languages || [],
+        hobbies: parsedResume.hobbies || [],
+        courses: parsedResume.courses || [],
+        projects: parsedResume.projects || [],
+        customSections: parsedResume.customSections || [],
+      };
+    }
+    return defaultResume;
   });
 
   React.useEffect(() => {
