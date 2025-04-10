@@ -2,7 +2,6 @@
 import React from "react";
 import { Project } from "@/contexts/ResumeContext";
 import { format } from "date-fns";
-import ReactMarkdown from "react-markdown";
 
 interface ProjectsSectionProps {
   projects: Project[];
@@ -27,7 +26,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) => {
           </div>
           {project.description && (
             <div className="text-sm mt-1 prose prose-sm max-w-none">
-              <ReactMarkdown>{project.description}</ReactMarkdown>
+              <div dangerouslySetInnerHTML={{ __html: project.description }} />
             </div>
           )}
         </div>

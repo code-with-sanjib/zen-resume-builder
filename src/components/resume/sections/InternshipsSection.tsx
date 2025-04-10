@@ -2,7 +2,6 @@
 import React from "react";
 import { Internship } from "@/contexts/ResumeContext";
 import { format } from "date-fns";
-import ReactMarkdown from "react-markdown";
 
 interface InternshipsSectionProps {
   internships: Internship[];
@@ -28,7 +27,7 @@ const InternshipsSection: React.FC<InternshipsSectionProps> = ({ internships }) 
           <p className="text-sm font-medium">{internship.company}</p>
           {internship.description && (
             <div className="text-sm mt-1 prose prose-sm max-w-none">
-              <ReactMarkdown>{internship.description}</ReactMarkdown>
+              <div dangerouslySetInnerHTML={{ __html: internship.description }} />
             </div>
           )}
         </div>

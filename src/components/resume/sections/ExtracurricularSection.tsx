@@ -2,7 +2,6 @@
 import React from "react";
 import { ExtracurricularActivity } from "@/contexts/ResumeContext";
 import { format } from "date-fns";
-import ReactMarkdown from "react-markdown";
 
 interface ExtracurricularSectionProps {
   extracurricular: ExtracurricularActivity[];
@@ -27,7 +26,7 @@ const ExtracurricularSection: React.FC<ExtracurricularSectionProps> = ({ extracu
           </div>
           {activity.description && (
             <div className="text-sm mt-1 prose prose-sm max-w-none">
-              <ReactMarkdown>{activity.description}</ReactMarkdown>
+              <div dangerouslySetInnerHTML={{ __html: activity.description }} />
             </div>
           )}
         </div>

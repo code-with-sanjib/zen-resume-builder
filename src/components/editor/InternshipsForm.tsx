@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { Plus, Trash2, Calendar as CalendarIcon, GripVertical, Building } from "lucide-react";
-import MDEditor from "@uiw/react-md-editor";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 
 const InternshipsForm = () => {
   const { resume, addInternship, updateInternship, removeInternship, reorderInternships } = useResume();
@@ -72,7 +71,6 @@ const InternshipsForm = () => {
     reorderInternships(items);
   };
 
-  // Ensure internships is an array even if it's undefined
   const internships = resume.internships || [];
 
   return (
@@ -190,14 +188,11 @@ const InternshipsForm = () => {
               
               <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
-                <MDEditor
+                <RichTextEditor
                   value={newInternship.description}
-                  onChange={(value) => setNewInternship({ ...newInternship, description: value || "" })}
-                  preview="edit"
+                  onChange={(value) => setNewInternship({ ...newInternship, description: value })}
+                  placeholder="Describe your responsibilities, achievements, and skills gained..."
                   height={200}
-                  textareaProps={{
-                    placeholder: "Describe your responsibilities, achievements, and skills gained... You can use **markdown** for formatting!"
-                  }}
                 />
               </div>
               
@@ -270,7 +265,7 @@ const InternshipsForm = () => {
                           </div>
                           
                           <div className="pl-7 text-sm prose prose-sm max-w-none">
-                            <MDEditor.Markdown source={internship.description} />
+                            <div className="rich-text-content" dangerouslySetInnerHTML={{ __html: internship.description }} />
                           </div>
                         </CardContent>
                       </Card>

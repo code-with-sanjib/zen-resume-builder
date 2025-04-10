@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { Plus, Trash2, Calendar as CalendarIcon, GripVertical } from "lucide-react";
-import MDEditor from "@uiw/react-md-editor";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 
 const ExtracurricularForm = () => {
   const { resume, addExtracurricular, updateExtracurricular, removeExtracurricular, reorderExtracurricular } = useResume();
@@ -67,7 +66,6 @@ const ExtracurricularForm = () => {
     reorderExtracurricular(items);
   };
 
-  // Ensure extracurricular is an array even if it's undefined
   const activities = resume.extracurricular || [];
 
   return (
@@ -158,14 +156,11 @@ const ExtracurricularForm = () => {
               
               <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
-                <MDEditor
+                <RichTextEditor
                   value={newActivity.description}
-                  onChange={(value) => setNewActivity({ ...newActivity, description: value || "" })}
-                  preview="edit"
+                  onChange={(value) => setNewActivity({ ...newActivity, description: value })}
+                  placeholder="Describe your activities, responsibilities, and achievements..."
                   height={200}
-                  textareaProps={{
-                    placeholder: "Describe your activities, responsibilities, and achievements... You can use **markdown** for formatting!"
-                  }}
                 />
               </div>
               
@@ -234,7 +229,7 @@ const ExtracurricularForm = () => {
                           </div>
                           
                           <div className="pl-7 text-sm prose prose-sm max-w-none">
-                            <MDEditor.Markdown source={activity.description} />
+                            <div className="rich-text-content" dangerouslySetInnerHTML={{ __html: activity.description }} />
                           </div>
                         </CardContent>
                       </Card>
