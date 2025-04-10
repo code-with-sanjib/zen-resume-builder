@@ -4,7 +4,6 @@ import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -14,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { Plus, Trash2, Calendar as CalendarIcon, GripVertical, Building } from "lucide-react";
+import MDEditor from "@uiw/react-md-editor";
 
 const InternshipsForm = () => {
   const { resume, addInternship, updateInternship, removeInternship, reorderInternships } = useResume();
@@ -65,12 +65,15 @@ const InternshipsForm = () => {
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
     
-    const items = Array.from(resume.internships);
+    const items = Array.from(resume.internships || []);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
     
     reorderInternships(items);
   };
+
+  // Ensure internships is an array even if it's undefined
+  const internships = resume.internships || [];
 
   return (
     <div className="space-y-4">
@@ -187,12 +190,14 @@ const InternshipsForm = () => {
               
               <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Describe your responsibilities, achievements, and skills gained..."
-                  className="min-h-[100px]"
+                <MDEditor
                   value={newInternship.description}
-                  onChange={(e) => setNewInternship({ ...newInternship, description: e.target.value })}
+                  onChange={(value) => setNewInternship({ ...newInternship, description: value || "" })}
+                  preview="edit"
+                  height={200}
+                  textareaProps={{
+                    placeholder: "Describe your responsibilities, achievements, and skills gained... You can use **markdown** for formatting!"
+                  }}
                 />
               </div>
               
@@ -205,7 +210,7 @@ const InternshipsForm = () => {
         </Card>
       )}
 
-      {resume.internships.length > 0 && (
+      {internships.length > 0 && (
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="internships-list">
             {(provided) => (
@@ -214,7 +219,7 @@ const InternshipsForm = () => {
                 ref={provided.innerRef}
                 className="space-y-3"
               >
-                {resume.internships.map((internship, index) => (
+                {internships.map((internship, index) => (
                   <Draggable key={internship.id} draggableId={internship.id} index={index}>
                     {(provided) => (
                       <Card
@@ -241,18 +246,31 @@ const InternshipsForm = () => {
                                 </div>
                               </div>
                             </div>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="opacity-0 group-hover:opacity-100 transition-opacity"
-                              onClick={() => handleRemove(internship.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setNewInternship({...internship});
+                                  setIsAdding(true);
+                                  removeInternship(internship.id);
+                                }}
+                              >
+                                Edit
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => handleRemove(internship.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
                           
-                          <div className="pl-7 text-sm">
-                            {internship.description}
+                          <div className="pl-7 text-sm prose prose-sm max-w-none">
+                            <MDEditor.Markdown source={internship.description} />
                           </div>
                         </CardContent>
                       </Card>
@@ -266,7 +284,7 @@ const InternshipsForm = () => {
         </DragDropContext>
       )}
 
-      {resume.internships.length === 0 && !isAdding && (
+      {internships.length === 0 && !isAdding && (
         <Card className="bg-muted/50 border-dashed">
           <CardContent className="py-8 flex flex-col items-center justify-center text-center">
             <p className="text-muted-foreground mb-2">No internships added yet</p>

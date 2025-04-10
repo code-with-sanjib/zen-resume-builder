@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Hobby } from "@/contexts/ResumeContext";
+import ReactMarkdown from "react-markdown";
 
 interface HobbiesSectionProps {
   hobbies: Hobby[];
@@ -19,7 +20,7 @@ const HobbiesSection: React.FC<HobbiesSectionProps> = ({ hobbies }) => {
             key={hobby.id}
             className="bg-gray-100 rounded-full px-3 py-1 text-sm"
           >
-            {hobby.description}
+            <ReactMarkdown>{hobby.description}</ReactMarkdown>
           </div>
         ))}
       </div>

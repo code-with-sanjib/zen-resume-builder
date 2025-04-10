@@ -3,11 +3,11 @@ import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { Plus, Trash2, GripVertical, Heart } from "lucide-react";
+import MDEditor from "@uiw/react-md-editor";
 
 const HobbiesForm = () => {
   const { resume, addHobby, updateHobby, removeHobby, reorderHobbies } = useResume();
@@ -49,12 +49,15 @@ const HobbiesForm = () => {
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
     
-    const items = Array.from(resume.hobbies);
+    const items = Array.from(resume.hobbies || []);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
     
     reorderHobbies(items);
   };
+
+  // Ensure hobbies is an array even if it's undefined
+  const hobbies = resume.hobbies || [];
 
   return (
     <div className="space-y-4">
@@ -76,11 +79,14 @@ const HobbiesForm = () => {
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  placeholder="e.g. Photography, Reading, Hiking, etc."
+                <MDEditor
                   value={newHobby.description}
-                  onChange={(e) => setNewHobby({ ...newHobby, description: e.target.value })}
+                  onChange={(value) => setNewHobby({ ...newHobby, description: value || "" })}
+                  preview="edit"
+                  height={200}
+                  textareaProps={{
+                    placeholder: "e.g. Photography, Reading, Hiking, etc. You can use **markdown** for formatting!"
+                  }}
                 />
               </div>
               
@@ -93,7 +99,7 @@ const HobbiesForm = () => {
         </Card>
       )}
 
-      {resume.hobbies.length > 0 && (
+      {hobbies.length > 0 && (
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="hobbies-list">
             {(provided) => (
@@ -102,7 +108,7 @@ const HobbiesForm = () => {
                 ref={provided.innerRef}
                 className="space-y-3"
               >
-                {resume.hobbies.map((hobby, index) => (
+                {hobbies.map((hobby, index) => (
                   <Draggable key={hobby.id} draggableId={hobby.id} index={index}>
                     {(provided) => (
                       <Card
@@ -121,14 +127,27 @@ const HobbiesForm = () => {
                                 <div>{hobby.description}</div>
                               </div>
                             </div>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="opacity-0 group-hover:opacity-100 transition-opacity"
-                              onClick={() => handleRemove(hobby.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setNewHobby({...hobby});
+                                  setIsAdding(true);
+                                  removeHobby(hobby.id);
+                                }}
+                              >
+                                Edit
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => handleRemove(hobby.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
@@ -142,7 +161,7 @@ const HobbiesForm = () => {
         </DragDropContext>
       )}
 
-      {resume.hobbies.length === 0 && !isAdding && (
+      {hobbies.length === 0 && !isAdding && (
         <Card className="bg-muted/50 border-dashed">
           <CardContent className="py-8 flex flex-col items-center justify-center text-center">
             <p className="text-muted-foreground mb-2">No hobbies or interests added yet</p>

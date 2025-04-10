@@ -4,7 +4,6 @@ import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -13,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { Plus, Trash2, Calendar as CalendarIcon, GripVertical } from "lucide-react";
+import MDEditor from "@uiw/react-md-editor";
 
 const ProjectsForm = () => {
   const { resume, addProject, updateProject, removeProject, reorderProjects } = useResume();
@@ -60,12 +60,15 @@ const ProjectsForm = () => {
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
     
-    const items = Array.from(resume.projects);
+    const items = Array.from(resume.projects || []);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
     
     reorderProjects(items);
   };
+  
+  // Ensure projects is an array even if it's undefined
+  const projects = resume.projects || [];
 
   return (
     <div className="space-y-4">
@@ -155,12 +158,14 @@ const ProjectsForm = () => {
               
               <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Describe the project, technologies used, and your role..."
-                  className="min-h-[100px]"
+                <MDEditor
                   value={newProject.description}
-                  onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
+                  onChange={(value) => setNewProject({ ...newProject, description: value || "" })}
+                  preview="edit"
+                  height={200}
+                  textareaProps={{
+                    placeholder: "Describe the project, technologies used, and your role... You can use **markdown** for formatting!"
+                  }}
                 />
               </div>
               
@@ -173,7 +178,7 @@ const ProjectsForm = () => {
         </Card>
       )}
 
-      {resume.projects.length > 0 && (
+      {projects.length > 0 && (
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="projects-list">
             {(provided) => (
@@ -182,7 +187,7 @@ const ProjectsForm = () => {
                 ref={provided.innerRef}
                 className="space-y-3"
               >
-                {resume.projects.map((project, index) => (
+                {projects.map((project, index) => (
                   <Draggable key={project.id} draggableId={project.id} index={index}>
                     {(provided) => (
                       <Card
@@ -205,18 +210,31 @@ const ProjectsForm = () => {
                                 </div>
                               </div>
                             </div>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="opacity-0 group-hover:opacity-100 transition-opacity"
-                              onClick={() => handleRemove(project.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setNewProject({...project});
+                                  setIsAdding(true);
+                                  removeProject(project.id);
+                                }}
+                              >
+                                Edit
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => handleRemove(project.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
                           
-                          <div className="pl-7 text-sm">
-                            {project.description}
+                          <div className="pl-7 text-sm prose prose-sm max-w-none">
+                            <MDEditor.Markdown source={project.description} />
                           </div>
                         </CardContent>
                       </Card>
@@ -230,7 +248,7 @@ const ProjectsForm = () => {
         </DragDropContext>
       )}
 
-      {resume.projects.length === 0 && !isAdding && (
+      {projects.length === 0 && !isAdding && (
         <Card className="bg-muted/50 border-dashed">
           <CardContent className="py-8 flex flex-col items-center justify-center text-center">
             <p className="text-muted-foreground mb-2">No projects added yet</p>

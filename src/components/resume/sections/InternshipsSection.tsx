@@ -2,16 +2,20 @@
 import React from "react";
 import { Internship } from "@/contexts/ResumeContext";
 import { format } from "date-fns";
+import ReactMarkdown from "react-markdown";
 
 interface InternshipsSectionProps {
   internships: Internship[];
 }
 
 const InternshipsSection: React.FC<InternshipsSectionProps> = ({ internships }) => {
+  // Ensure internships is an array even if it's undefined
+  const internshipItems = internships || [];
+  
   return (
     <div className="mb-6">
       <h2 className="text-lg font-bold border-b border-gray-300 pb-1 mb-2">Internships</h2>
-      {internships.map((internship) => (
+      {internshipItems.map((internship) => (
         <div key={internship.id} className="mb-4">
           <div className="flex justify-between">
             <h3 className="font-bold text-base">{internship.jobTitle}</h3>
@@ -22,7 +26,11 @@ const InternshipsSection: React.FC<InternshipsSectionProps> = ({ internships }) 
             </span>
           </div>
           <p className="text-sm font-medium">{internship.company}</p>
-          {internship.description && <p className="text-sm mt-1">{internship.description}</p>}
+          {internship.description && (
+            <div className="text-sm mt-1 prose prose-sm max-w-none">
+              <ReactMarkdown>{internship.description}</ReactMarkdown>
+            </div>
+          )}
         </div>
       ))}
     </div>

@@ -4,7 +4,6 @@ import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
@@ -13,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { Plus, Trash2, Calendar as CalendarIcon, GripVertical } from "lucide-react";
+import MDEditor from "@uiw/react-md-editor";
 
 const ExtracurricularForm = () => {
   const { resume, addExtracurricular, updateExtracurricular, removeExtracurricular, reorderExtracurricular } = useResume();
@@ -158,12 +158,14 @@ const ExtracurricularForm = () => {
               
               <div className="grid gap-2">
                 <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Describe your activities, responsibilities, and achievements..."
-                  className="min-h-[100px]"
+                <MDEditor
                   value={newActivity.description}
-                  onChange={(e) => setNewActivity({ ...newActivity, description: e.target.value })}
+                  onChange={(value) => setNewActivity({ ...newActivity, description: value || "" })}
+                  preview="edit"
+                  height={200}
+                  textareaProps={{
+                    placeholder: "Describe your activities, responsibilities, and achievements... You can use **markdown** for formatting!"
+                  }}
                 />
               </div>
               
@@ -208,18 +210,31 @@ const ExtracurricularForm = () => {
                                 </div>
                               </div>
                             </div>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="opacity-0 group-hover:opacity-100 transition-opacity"
-                              onClick={() => handleRemove(activity.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setNewActivity({...activity});
+                                  setIsAdding(true);
+                                  removeExtracurricular(activity.id);
+                                }}
+                              >
+                                Edit
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => handleRemove(activity.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
                           
-                          <div className="text-sm">
-                            {activity.description}
+                          <div className="pl-7 text-sm prose prose-sm max-w-none">
+                            <MDEditor.Markdown source={activity.description} />
                           </div>
                         </CardContent>
                       </Card>
