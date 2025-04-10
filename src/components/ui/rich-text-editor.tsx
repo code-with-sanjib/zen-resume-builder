@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react'
-import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react'
+import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
@@ -111,7 +111,7 @@ const RichTextEditor = ({
           size="sm"
           variant="ghost"
           type="button"
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
+          onClick={() => editor.chain().focus().toggleMark('underline').run()}
           className={editor.isActive('underline') ? 'bg-muted' : ''}
         >
           <UnderlineIcon className="h-4 w-4" />
