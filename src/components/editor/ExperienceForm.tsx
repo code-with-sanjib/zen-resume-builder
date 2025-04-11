@@ -5,9 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2, Plus, Calendar as CalendarIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const ExperienceForm = () => {
   const { resume, addExperience, updateExperience, removeExperience } = useResume();
@@ -45,14 +49,95 @@ const ExperienceForm = () => {
 
   const handleSwitchChange = (checked: boolean, id?: string) => {
     if (id) {
-      updateExperience(id, { current: checked });
+      updateExperience(id, { 
+        current: checked,
+        endDate: checked ? "" : resume.experience.find(exp => exp.id === id)?.endDate || ""
+      });
     } else {
-      setNewExperience(prev => ({ ...prev, current: checked }));
+      setNewExperience(prev => ({ 
+        ...prev, 
+        current: checked,
+        endDate: checked ? "" : prev.endDate
+      }));
+    }
+  };
+
+  const handleDateChange = (date: Date | undefined, field: "startDate" | "endDate", id?: string) => {
+    if (!date) return;
+    
+    const dateStr = date.toISOString();
+    
+    if (id) {
+      const exp = resume.experience.find(e => e.id === id);
+      
+      // If setting end date, ensure it's after start date
+      if (field === "endDate" && exp?.startDate && new Date(exp.startDate) > date) {
+        toast({
+          title: "Invalid date selection",
+          description: "End date cannot be earlier than start date.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // If setting start date, ensure it's before end date
+      if (field === "startDate" && exp?.endDate && !exp.current && new Date(exp.endDate) < date) {
+        toast({
+          title: "Invalid date selection",
+          description: "Start date cannot be later than end date.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      updateExperience(id, { [field]: dateStr });
+    } else {
+      // If setting end date, ensure it's after start date
+      if (field === "endDate" && newExperience.startDate && new Date(newExperience.startDate) > date) {
+        toast({
+          title: "Invalid date selection",
+          description: "End date cannot be earlier than start date.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // If setting start date, ensure it's before end date
+      if (field === "startDate" && newExperience.endDate && !newExperience.current && new Date(newExperience.endDate) < date) {
+        toast({
+          title: "Invalid date selection",
+          description: "Start date cannot be later than end date.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      setNewExperience(prev => ({ ...prev, [field]: dateStr }));
     }
   };
 
   const handleAddExperience = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate dates
+    if (!newExperience.startDate) {
+      toast({
+        title: "Missing start date",
+        description: "Please select a start date.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!newExperience.current && !newExperience.endDate) {
+      toast({
+        title: "Missing end date",
+        description: "Please select an end date or mark as current position.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     addExperience(newExperience);
     setNewExperience({
       company: "",
@@ -120,28 +205,60 @@ const ExperienceForm = () => {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-4">
             <div className="space-y-2">
-              <Label htmlFor={`startDate-${exp.id}`}>Start Date</Label>
-              <Input
-                id={`startDate-${exp.id}`}
-                name="startDate"
-                type="text"
-                placeholder="MM/YYYY"
-                value={exp.startDate}
-                onChange={(e) => handleInputChange(e, exp.id)}
-              />
+              <Label>Start Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    id={`startDate-${exp.id}`}
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !exp.startDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {exp.startDate ? format(new Date(exp.startDate), "MMM yyyy") : "Select date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    onSelect={(date) => handleDateChange(date, "startDate", exp.id)}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor={`endDate-${exp.id}`}>End Date</Label>
-              <Input
-                id={`endDate-${exp.id}`}
-                name="endDate"
-                type="text"
-                placeholder="MM/YYYY"
-                value={exp.endDate}
-                onChange={(e) => handleInputChange(e, exp.id)}
-                disabled={exp.current}
-              />
+              <Label>End Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    id={`endDate-${exp.id}`}
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !exp.endDate && "text-muted-foreground"
+                    )}
+                    disabled={exp.current}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {exp.current ? "Present" : exp.endDate ? format(new Date(exp.endDate), "MMM yyyy") : "Select date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    onSelect={(date) => handleDateChange(date, "endDate", exp.id)}
+                    disabled={exp.current}
+                    fromDate={exp.startDate ? new Date(exp.startDate) : undefined}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
 
@@ -196,30 +313,60 @@ const ExperienceForm = () => {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-4">
             <div className="space-y-2">
-              <Label htmlFor="startDate">Start Date</Label>
-              <Input
-                id="startDate"
-                name="startDate"
-                type="text"
-                placeholder="MM/YYYY"
-                value={newExperience.startDate}
-                onChange={handleInputChange}
-                required
-              />
+              <Label>Start Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    id="startDate"
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !newExperience.startDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {newExperience.startDate ? format(new Date(newExperience.startDate), "MMM yyyy") : "Select date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    onSelect={(date) => handleDateChange(date, "startDate")}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="endDate">End Date</Label>
-              <Input
-                id="endDate"
-                name="endDate"
-                type="text"
-                placeholder="MM/YYYY"
-                value={newExperience.endDate}
-                onChange={handleInputChange}
-                disabled={newExperience.current}
-                required={!newExperience.current}
-              />
+              <Label>End Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    id="endDate"
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !newExperience.endDate && "text-muted-foreground"
+                    )}
+                    disabled={newExperience.current}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {newExperience.current ? "Present" : newExperience.endDate ? format(new Date(newExperience.endDate), "MMM yyyy") : "Select date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    onSelect={(date) => handleDateChange(date, "endDate")}
+                    disabled={newExperience.current}
+                    fromDate={newExperience.startDate ? new Date(newExperience.startDate) : undefined}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
 
