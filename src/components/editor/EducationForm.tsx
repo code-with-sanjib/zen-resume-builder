@@ -49,6 +49,7 @@ const EducationForm = () => {
   const handleDateChange = (date: Date | undefined, field: "startDate" | "endDate", id?: string) => {
     if (!date) return;
     
+    // Fix: Convert Date to ISO string safely
     const dateStr = date.toISOString();
     
     if (id) {
@@ -219,7 +220,7 @@ const EducationForm = () => {
                     mode="single"
                     onSelect={(date) => handleDateChange(date, "startDate", edu.id)}
                     initialFocus
-                    className="p-3 pointer-events-auto"
+                    className="p-3"
                   />
                 </PopoverContent>
               </Popover>
@@ -247,7 +248,7 @@ const EducationForm = () => {
                     onSelect={(date) => handleDateChange(date, "endDate", edu.id)}
                     fromDate={edu.startDate ? new Date(edu.startDate) : undefined}
                     initialFocus
-                    className="p-3 pointer-events-auto"
+                    className="p-3"
                   />
                 </PopoverContent>
               </Popover>
@@ -327,7 +328,7 @@ const EducationForm = () => {
                     mode="single"
                     onSelect={(date) => handleDateChange(date, "startDate")}
                     initialFocus
-                    className="p-3 pointer-events-auto"
+                    className="p-3"
                   />
                 </PopoverContent>
               </Popover>
@@ -355,7 +356,7 @@ const EducationForm = () => {
                     onSelect={(date) => handleDateChange(date, "endDate")}
                     fromDate={newEducation.startDate ? new Date(newEducation.startDate) : undefined}
                     initialFocus
-                    className="p-3 pointer-events-auto"
+                    className="p-3"
                   />
                 </PopoverContent>
               </Popover>

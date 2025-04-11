@@ -65,6 +65,7 @@ const ExperienceForm = () => {
   const handleDateChange = (date: Date | undefined, field: "startDate" | "endDate", id?: string) => {
     if (!date) return;
     
+    // Fix: Convert Date to ISO string safely
     const dateStr = date.toISOString();
     
     if (id) {
@@ -225,7 +226,7 @@ const ExperienceForm = () => {
                     mode="single"
                     onSelect={(date) => handleDateChange(date, "startDate", exp.id)}
                     initialFocus
-                    className="p-3 pointer-events-auto"
+                    className="p-3"
                   />
                 </PopoverContent>
               </Popover>
@@ -255,7 +256,7 @@ const ExperienceForm = () => {
                     disabled={exp.current}
                     fromDate={exp.startDate ? new Date(exp.startDate) : undefined}
                     initialFocus
-                    className="p-3 pointer-events-auto"
+                    className="p-3"
                   />
                 </PopoverContent>
               </Popover>
@@ -333,7 +334,7 @@ const ExperienceForm = () => {
                     mode="single"
                     onSelect={(date) => handleDateChange(date, "startDate")}
                     initialFocus
-                    className="p-3 pointer-events-auto"
+                    className="p-3"
                   />
                 </PopoverContent>
               </Popover>
@@ -363,7 +364,7 @@ const ExperienceForm = () => {
                     disabled={newExperience.current}
                     fromDate={newExperience.startDate ? new Date(newExperience.startDate) : undefined}
                     initialFocus
-                    className="p-3 pointer-events-auto"
+                    className="p-3"
                   />
                 </PopoverContent>
               </Popover>
