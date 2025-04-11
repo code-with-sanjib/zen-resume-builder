@@ -8,10 +8,13 @@ interface CoursesSectionProps {
 }
 
 const CoursesSection: React.FC<CoursesSectionProps> = ({ courses }) => {
+  // Ensure courses is an array even if it's undefined
+  const courseItems = courses || [];
+  
   return (
     <div className="mb-6">
       <h2 className="text-lg font-bold border-b border-gray-300 pb-1 mb-2">Courses & Certifications</h2>
-      {courses.map((course) => (
+      {courseItems.map((course) => (
         <div key={course.id} className="mb-4">
           <div className="flex justify-between">
             <h3 className="font-bold text-base">{course.name}</h3>

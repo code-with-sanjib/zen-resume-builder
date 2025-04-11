@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,7 +13,6 @@ import { useToast } from "@/hooks/use-toast";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { Plus, Trash2, Calendar as CalendarIcon, GripVertical } from "lucide-react";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
-import ReactMarkdown from "react-markdown";
 
 const ProjectsForm = () => {
   const { resume, addProject, updateProject, removeProject, reorderProjects } = useResume();
@@ -24,6 +24,12 @@ const ProjectsForm = () => {
     startDate: "",
     endDate: "",
   });
+  
+  // New state to track open popovers
+  const [datePopoverOpen, setDatePopoverOpen] = useState<{
+    id?: string;
+    type: "start" | "end";
+  } | null>(null);
 
   const handleAdd = () => {
     if (!newProject.title) {
@@ -67,6 +73,48 @@ const ProjectsForm = () => {
     reorderProjects(items);
   };
   
+  // Handle date changes
+  const handleDateChange = (date: Date | undefined, type: "start" | "end", id?: string) => {
+    if (!date) return;
+    
+    const dateStr = date.toISOString();
+    
+    if (id) {
+      // Update existing project
+      const project = resume.projects?.find(item => item.id === id);
+      if (project) {
+        const updatedProject = { ...project };
+        
+        if (type === "start") {
+          updatedProject.startDate = dateStr;
+          // Clear end date if it's before start date
+          if (updatedProject.endDate && new Date(updatedProject.endDate) < date) {
+            updatedProject.endDate = "";
+          }
+        } else {
+          updatedProject.endDate = dateStr;
+        }
+        
+        updateProject(updatedProject);
+      }
+    } else {
+      // Update new project
+      if (type === "start") {
+        setNewProject({ 
+          ...newProject, 
+          startDate: dateStr,
+          // Clear end date if it's before the new start date
+          endDate: newProject.endDate && new Date(newProject.endDate) < date ? "" : newProject.endDate
+        });
+      } else {
+        setNewProject({ ...newProject, endDate: dateStr });
+      }
+    }
+    
+    // Close the popover after selection
+    setDatePopoverOpen(null);
+  };
+  
   const projects = resume.projects || [];
 
   return (
@@ -100,7 +148,13 @@ const ProjectsForm = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label>Start Date</Label>
-                  <Popover>
+                  <Popover
+                    open={datePopoverOpen?.type === "start" && datePopoverOpen?.id === undefined}
+                    onOpenChange={(open) => open 
+                      ? setDatePopoverOpen({ type: "start", id: undefined }) 
+                      : setDatePopoverOpen(null)
+                    }
+                  >
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
@@ -116,11 +170,8 @@ const ProjectsForm = () => {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        onSelect={(date) => 
-                          date && setNewProject({ ...newProject, startDate: date.toISOString() })
-                        }
+                        onSelect={(date) => handleDateChange(date, "start")}
                         initialFocus
-                        className="p-3 pointer-events-auto"
                       />
                     </PopoverContent>
                   </Popover>
@@ -128,7 +179,13 @@ const ProjectsForm = () => {
                 
                 <div className="grid gap-2">
                   <Label>End Date</Label>
-                  <Popover>
+                  <Popover
+                    open={datePopoverOpen?.type === "end" && datePopoverOpen?.id === undefined}
+                    onOpenChange={(open) => open 
+                      ? setDatePopoverOpen({ type: "end", id: undefined }) 
+                      : setDatePopoverOpen(null)
+                    }
+                  >
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
@@ -136,6 +193,7 @@ const ProjectsForm = () => {
                           "justify-start text-left font-normal",
                           !newProject.endDate && "text-muted-foreground"
                         )}
+                        disabled={!newProject.startDate}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {newProject.endDate ? format(new Date(newProject.endDate), "MMM yyyy") : "Select date"}
@@ -144,11 +202,9 @@ const ProjectsForm = () => {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        onSelect={(date) => 
-                          date && setNewProject({ ...newProject, endDate: date.toISOString() })
-                        }
+                        onSelect={(date) => handleDateChange(date, "end")}
+                        fromDate={newProject.startDate ? new Date(newProject.startDate) : undefined}
                         initialFocus
-                        className="p-3 pointer-events-auto"
                       />
                     </PopoverContent>
                   </Popover>

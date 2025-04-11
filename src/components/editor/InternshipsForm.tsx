@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,6 +27,12 @@ const InternshipsForm = () => {
     current: false,
     description: "",
   });
+  
+  // New state to track open popovers
+  const [datePopoverOpen, setDatePopoverOpen] = useState<{
+    id?: string;
+    type: "start" | "end";
+  } | null>(null);
 
   const handleAdd = () => {
     if (!newInternship.jobTitle || !newInternship.company) {
@@ -69,6 +76,50 @@ const InternshipsForm = () => {
     items.splice(result.destination.index, 0, reorderedItem);
     
     reorderInternships(items);
+  };
+  
+  // Handle date changes
+  const handleDateChange = (date: Date | undefined, type: "start" | "end", id?: string) => {
+    if (!date) return;
+    
+    const dateStr = date.toISOString();
+    
+    if (id) {
+      // Update existing internship
+      const internship = resume.internships?.find(item => item.id === id);
+      if (internship) {
+        const updatedInternship = { ...internship };
+        
+        if (type === "start") {
+          updatedInternship.startDate = dateStr;
+          // Clear end date if it's before start date and not current
+          if (!updatedInternship.current && updatedInternship.endDate && new Date(updatedInternship.endDate) < date) {
+            updatedInternship.endDate = "";
+          }
+        } else if (!internship.current) {
+          updatedInternship.endDate = dateStr;
+        }
+        
+        updateInternship(updatedInternship);
+      }
+    } else {
+      // Update new internship
+      if (type === "start") {
+        setNewInternship({ 
+          ...newInternship, 
+          startDate: dateStr,
+          // Clear end date if it's before the new start date and not current
+          endDate: !newInternship.current && newInternship.endDate && new Date(newInternship.endDate) < date 
+            ? "" 
+            : newInternship.endDate
+        });
+      } else if (!newInternship.current) {
+        setNewInternship({ ...newInternship, endDate: dateStr });
+      }
+    }
+    
+    // Close the popover after selection
+    setDatePopoverOpen(null);
   };
 
   const internships = resume.internships || [];
@@ -129,7 +180,13 @@ const InternshipsForm = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label>Start Date</Label>
-                  <Popover>
+                  <Popover
+                    open={datePopoverOpen?.type === "start" && datePopoverOpen?.id === undefined}
+                    onOpenChange={(open) => open 
+                      ? setDatePopoverOpen({ type: "start", id: undefined }) 
+                      : setDatePopoverOpen(null)
+                    }
+                  >
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
@@ -145,11 +202,8 @@ const InternshipsForm = () => {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        onSelect={(date) => 
-                          date && setNewInternship({ ...newInternship, startDate: date.toISOString() })
-                        }
+                        onSelect={(date) => handleDateChange(date, "start")}
                         initialFocus
-                        className="p-3 pointer-events-auto"
                       />
                     </PopoverContent>
                   </Popover>
@@ -158,7 +212,13 @@ const InternshipsForm = () => {
                 {!newInternship.current && (
                   <div className="grid gap-2">
                     <Label>End Date</Label>
-                    <Popover>
+                    <Popover
+                      open={datePopoverOpen?.type === "end" && datePopoverOpen?.id === undefined}
+                      onOpenChange={(open) => open 
+                        ? setDatePopoverOpen({ type: "end", id: undefined }) 
+                        : setDatePopoverOpen(null)
+                      }
+                    >
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
@@ -166,6 +226,7 @@ const InternshipsForm = () => {
                             "justify-start text-left font-normal",
                             !newInternship.endDate && "text-muted-foreground"
                           )}
+                          disabled={!newInternship.startDate}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {newInternship.endDate ? format(new Date(newInternship.endDate), "MMM yyyy") : "Select date"}
@@ -174,11 +235,9 @@ const InternshipsForm = () => {
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          onSelect={(date) => 
-                            date && setNewInternship({ ...newInternship, endDate: date.toISOString() })
-                          }
+                          onSelect={(date) => handleDateChange(date, "end")}
+                          fromDate={newInternship.startDate ? new Date(newInternship.startDate) : undefined}
                           initialFocus
-                          className="p-3 pointer-events-auto"
                         />
                       </PopoverContent>
                     </Popover>

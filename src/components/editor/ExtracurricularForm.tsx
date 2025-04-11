@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,6 +24,12 @@ const ExtracurricularForm = () => {
     endDate: "",
     description: "",
   });
+  
+  // New state to track open popovers
+  const [datePopoverOpen, setDatePopoverOpen] = useState<{
+    id?: string;
+    type: "start" | "end";
+  } | null>(null);
 
   const handleAdd = () => {
     if (!newActivity.title) {
@@ -65,6 +72,48 @@ const ExtracurricularForm = () => {
     
     reorderExtracurricular(items);
   };
+  
+  // Handle date changes
+  const handleDateChange = (date: Date | undefined, type: "start" | "end", id?: string) => {
+    if (!date) return;
+    
+    const dateStr = date.toISOString();
+    
+    if (id) {
+      // Update existing activity
+      const activity = resume.extracurricular?.find(item => item.id === id);
+      if (activity) {
+        const updatedActivity = { ...activity };
+        
+        if (type === "start") {
+          updatedActivity.startDate = dateStr;
+          // Clear end date if it's before start date
+          if (updatedActivity.endDate && new Date(updatedActivity.endDate) < date) {
+            updatedActivity.endDate = "";
+          }
+        } else {
+          updatedActivity.endDate = dateStr;
+        }
+        
+        updateExtracurricular(updatedActivity);
+      }
+    } else {
+      // Update new activity
+      if (type === "start") {
+        setNewActivity({ 
+          ...newActivity, 
+          startDate: dateStr,
+          // Clear end date if it's before the new start date
+          endDate: newActivity.endDate && new Date(newActivity.endDate) < date ? "" : newActivity.endDate
+        });
+      } else {
+        setNewActivity({ ...newActivity, endDate: dateStr });
+      }
+    }
+    
+    // Close the popover after selection
+    setDatePopoverOpen(null);
+  };
 
   const activities = resume.extracurricular || [];
 
@@ -99,7 +148,13 @@ const ExtracurricularForm = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label>Start Date</Label>
-                  <Popover>
+                  <Popover 
+                    open={datePopoverOpen?.type === "start" && datePopoverOpen?.id === undefined}
+                    onOpenChange={(open) => open 
+                      ? setDatePopoverOpen({ type: "start", id: undefined }) 
+                      : setDatePopoverOpen(null)
+                    }
+                  >
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
@@ -115,11 +170,8 @@ const ExtracurricularForm = () => {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        onSelect={(date) => 
-                          date && setNewActivity({ ...newActivity, startDate: date.toISOString() })
-                        }
+                        onSelect={(date) => handleDateChange(date, "start")}
                         initialFocus
-                        className="p-3 pointer-events-auto"
                       />
                     </PopoverContent>
                   </Popover>
@@ -127,7 +179,13 @@ const ExtracurricularForm = () => {
                 
                 <div className="grid gap-2">
                   <Label>End Date</Label>
-                  <Popover>
+                  <Popover
+                    open={datePopoverOpen?.type === "end" && datePopoverOpen?.id === undefined}
+                    onOpenChange={(open) => open 
+                      ? setDatePopoverOpen({ type: "end", id: undefined }) 
+                      : setDatePopoverOpen(null)
+                    }
+                  >
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
@@ -135,6 +193,7 @@ const ExtracurricularForm = () => {
                           "justify-start text-left font-normal",
                           !newActivity.endDate && "text-muted-foreground"
                         )}
+                        disabled={!newActivity.startDate}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {newActivity.endDate ? format(new Date(newActivity.endDate), "MMM yyyy") : "Select date"}
@@ -143,11 +202,9 @@ const ExtracurricularForm = () => {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        onSelect={(date) => 
-                          date && setNewActivity({ ...newActivity, endDate: date.toISOString() })
-                        }
+                        onSelect={(date) => handleDateChange(date, "end")}
+                        fromDate={newActivity.startDate ? new Date(newActivity.startDate) : undefined}
                         initialFocus
-                        className="p-3 pointer-events-auto"
                       />
                     </PopoverContent>
                   </Popover>

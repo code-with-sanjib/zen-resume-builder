@@ -56,6 +56,9 @@ function Calendar({
         IconLeft: () => <ChevronLeft className="h-4 w-4" />,
         IconRight: () => <ChevronRight className="h-4 w-4" />,
       }}
+      captionLayout="dropdown-buttons"
+      fromYear={1950}
+      toYear={2050}
       {...props}
     />
   );
