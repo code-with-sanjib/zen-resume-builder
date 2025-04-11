@@ -69,6 +69,31 @@
   text-decoration: line-through;
 }
 
+/* Resume preview specific styles */
+.resume-preview .rich-text-content ul,
+.resume-preview .rich-text-content ol {
+  margin-left: 1.25em;
+  margin-bottom: 0.5em;
+}
+
+.resume-preview .rich-text-content li {
+  margin-bottom: 0.2em;
+}
+
+/* Print styles for the resume */
+@media print {
+  .rich-text-content ul,
+  .rich-text-content ol {
+    margin-left: 1.25em;
+    margin-bottom: 0.5em;
+  }
+  
+  .rich-text-content a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
 /* TipTap specifics */
 .ProseMirror:focus {
   outline: none;

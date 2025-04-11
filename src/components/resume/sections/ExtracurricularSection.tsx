@@ -25,7 +25,7 @@ const ExtracurricularSection: React.FC<ExtracurricularSectionProps> = ({ extracu
             </span>
           </div>
           {activity.description && (
-            <div className="text-sm mt-1 prose prose-sm max-w-none">
+            <div className="text-sm mt-1 rich-text-content">
               <div dangerouslySetInnerHTML={{ __html: activity.description }} />
             </div>
           )}

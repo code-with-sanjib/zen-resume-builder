@@ -26,7 +26,7 @@ const InternshipsSection: React.FC<InternshipsSectionProps> = ({ internships }) 
           </div>
           <p className="text-sm font-medium">{internship.company}</p>
           {internship.description && (
-            <div className="text-sm mt-1 prose prose-sm max-w-none">
+            <div className="text-sm mt-1 rich-text-content">
               <div dangerouslySetInnerHTML={{ __html: internship.description }} />
             </div>
           )}

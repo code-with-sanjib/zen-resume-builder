@@ -25,7 +25,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ projects }) => {
             </span>
           </div>
           {project.description && (
-            <div className="text-sm mt-1 prose prose-sm max-w-none">
+            <div className="text-sm mt-1 rich-text-content">
               <div dangerouslySetInnerHTML={{ __html: project.description }} />
             </div>
           )}
