@@ -2,19 +2,23 @@
 import { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 
 const PersonalInfoForm = () => {
   const { resume, updatePersonalInfo } = useResume();
   const { toast } = useToast();
   const [formData, setFormData] = useState({ ...resume.personal });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSummaryChange = (value: string) => {
+    setFormData(prev => ({ ...prev, summary: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -103,13 +107,11 @@ const PersonalInfoForm = () => {
 
       <div className="space-y-2">
         <Label htmlFor="summary">Professional Summary</Label>
-        <Textarea
-          id="summary"
-          name="summary"
+        <RichTextEditor
           value={formData.summary}
-          onChange={handleInputChange}
+          onChange={handleSummaryChange}
           placeholder="Write a brief summary highlighting your skills and experience..."
-          rows={4}
+          height={150}
         />
       </div>
 

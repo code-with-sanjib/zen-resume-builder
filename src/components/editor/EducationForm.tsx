@@ -1,11 +1,12 @@
+
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Trash2, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 
 const EducationForm = () => {
   const { resume, addEducation, updateEducation, removeEducation } = useResume();
@@ -21,7 +22,7 @@ const EducationForm = () => {
   });
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement>,
     id?: string
   ) => {
     const { name, value } = e.target;
@@ -30,6 +31,14 @@ const EducationForm = () => {
       updateEducation(id, { [name]: value });
     } else {
       setNewEducation(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleDescriptionChange = (value: string, id?: string) => {
+    if (id) {
+      updateEducation(id, { description: value });
+    } else {
+      setNewEducation(prev => ({ ...prev, description: value }));
     }
   };
 
@@ -138,12 +147,10 @@ const EducationForm = () => {
 
           <div className="mt-4">
             <Label htmlFor={`description-${edu.id}`}>Description (Optional)</Label>
-            <Textarea
-              id={`description-${edu.id}`}
-              name="description"
+            <RichTextEditor
               value={edu.description}
-              onChange={(e) => handleInputChange(e, edu.id)}
-              rows={3}
+              onChange={(value) => handleDescriptionChange(value, edu.id)}
+              height={150}
             />
           </div>
         </div>
@@ -219,12 +226,11 @@ const EducationForm = () => {
 
           <div className="mt-4">
             <Label htmlFor="description">Description (Optional)</Label>
-            <Textarea
-              id="description"
-              name="description"
+            <RichTextEditor
               value={newEducation.description}
-              onChange={handleInputChange}
-              rows={3}
+              onChange={(value) => handleDescriptionChange(value)}
+              height={150}
+              placeholder="Describe your academic achievements, coursework, etc..."
             />
           </div>
 

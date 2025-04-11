@@ -1,12 +1,13 @@
+
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Trash2, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 
 const ExperienceForm = () => {
   const { resume, addExperience, updateExperience, removeExperience } = useResume();
@@ -22,7 +23,7 @@ const ExperienceForm = () => {
   });
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement>,
     id?: string
   ) => {
     const { name, value } = e.target;
@@ -31,6 +32,14 @@ const ExperienceForm = () => {
       updateExperience(id, { [name]: value });
     } else {
       setNewExperience(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleDescriptionChange = (value: string, id?: string) => {
+    if (id) {
+      updateExperience(id, { description: value });
+    } else {
+      setNewExperience(prev => ({ ...prev, description: value }));
     }
   };
 
@@ -147,12 +156,10 @@ const ExperienceForm = () => {
 
           <div className="mt-4">
             <Label htmlFor={`description-${exp.id}`}>Description</Label>
-            <Textarea
-              id={`description-${exp.id}`}
-              name="description"
+            <RichTextEditor
               value={exp.description}
-              onChange={(e) => handleInputChange(e, exp.id)}
-              rows={3}
+              onChange={(value) => handleDescriptionChange(value, exp.id)}
+              height={150}
             />
           </div>
         </div>
@@ -227,13 +234,11 @@ const ExperienceForm = () => {
 
           <div className="mt-4">
             <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              name="description"
+            <RichTextEditor
               value={newExperience.description}
-              onChange={handleInputChange}
-              rows={3}
-              required
+              onChange={(value) => handleDescriptionChange(value)}
+              height={150}
+              placeholder="Describe your responsibilities and achievements..."
             />
           </div>
 
