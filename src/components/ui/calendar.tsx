@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
-import { DayPicker, type DayClickEventHandler } from "react-day-picker";
+import { DayPicker } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -16,66 +16,67 @@ function Calendar({
 }: CalendarProps) {
   const { toast } = useToast();
   
-  // Enhanced day click handler that shows toast for invalid dates
-  const handleDayClick: DayClickEventHandler = React.useCallback((day, modifiers, e) => {
-    // Check if the day is disabled
-    if (modifiers.disabled) {
-      toast({
-        title: "Invalid date selection",
-        description: "Please select a valid date",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    // Call original onDayClick if provided
-    if (props.onDayClick) {
-      props.onDayClick(day, modifiers, e);
-    }
-  }, [props.onDayClick, toast]);
-  
-  // Memoize components to prevent unnecessary re-renders
-  const Icons = React.useMemo(
+  // Base class names - memoized to prevent recalculation
+  const baseClassNames = React.useMemo(
     () => ({
-      IconLeft: () => <ChevronLeft className="h-4 w-4 stroke-2" />,
-      IconRight: () => <ChevronRight className="h-4 w-4 stroke-2" />,
+      months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+      month: "space-y-4",
+      caption: "flex justify-center pt-1 relative items-center",
+      caption_label: "text-base font-medium",
+      nav: "space-x-1 flex items-center",
+      nav_button: cn(
+        buttonVariants({ variant: "ghost", size: "icon" }),
+        "h-8 w-8 bg-transparent p-0 opacity-70 hover:opacity-100 transition-opacity"
+      ),
+      nav_button_previous: "absolute left-1",
+      nav_button_next: "absolute right-1",
+      table: "w-full border-collapse space-y-1",
+      head_row: "flex",
+      head_cell:
+        "text-muted-foreground rounded-md w-9 font-medium text-[0.8rem] uppercase",
+      row: "flex w-full mt-2",
+      cell: "h-9 w-9 text-center text-sm p-0 relative focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent/50 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md",
+      day: cn(
+        buttonVariants({ variant: "ghost" }),
+        "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-accent hover:text-accent-foreground rounded-full transition-colors"
+      ),
+      day_range_end: "day-range-end",
+      day_selected:
+        "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-full",
+      day_today: "bg-accent text-accent-foreground rounded-full font-semibold",
+      day_outside:
+        "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
+      day_disabled: "text-muted-foreground opacity-50",
+      day_range_middle:
+        "aria-selected:bg-accent aria-selected:text-accent-foreground",
+      day_hidden: "invisible",
     }),
     []
   );
 
-  // Memoize the YearDropdown to avoid re-rendering when parent component updates
+  // Create memoized caption component for better performance
   const YearDropdown = React.useCallback(
     ({ displayMonth }: { displayMonth: Date }) => {
       const [isOpen, setIsOpen] = React.useState(false);
       const yearRef = React.useRef<HTMLDivElement>(null);
       const dropdownRef = React.useRef<HTMLDivElement>(null);
       const selectedYearRef = React.useRef<HTMLDivElement>(null);
-
+      
       const monthNames = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
+        "January", "February", "March", "April", "May", "June", 
+        "July", "August", "September", "October", "November", "December"
       ];
 
       const currentYear = displayMonth.getFullYear();
       const currentMonth = monthNames[displayMonth.getMonth()];
 
-      // Create years array efficiently
+      // Years range for dropdown
       const years = React.useMemo(
-        () => Array.from({ length: 2050 - 1950 + 1 }, (_, i) => i + 1950),
+        () => Array.from({ length: 101 }, (_, i) => i + 1950),
         []
       );
 
-      // Handle outside clicks
+      // Handle outside clicks to close dropdown
       React.useEffect(() => {
         if (!isOpen) return;
 
@@ -93,7 +94,7 @@ function Calendar({
           document.removeEventListener("mousedown", handleClickOutside);
       }, [isOpen]);
 
-      // Scroll to selected year
+      // Scroll to selected year when dropdown opens
       React.useEffect(() => {
         if (isOpen && selectedYearRef.current) {
           selectedYearRef.current.scrollIntoView({
@@ -112,14 +113,13 @@ function Calendar({
         [displayMonth, props.onMonthChange]
       );
 
-      // Handle next month navigation
+      // Navigation handlers
       const handleNextMonth = () => {
         const nextMonth = new Date(displayMonth);
         nextMonth.setMonth(nextMonth.getMonth() + 1);
         props.onMonthChange?.(nextMonth);
       };
 
-      // Handle previous month navigation
       const handlePrevMonth = () => {
         const prevMonth = new Date(displayMonth);
         prevMonth.setMonth(prevMonth.getMonth() - 1);
@@ -135,12 +135,13 @@ function Calendar({
               "h-7 w-7 bg-transparent p-0 opacity-70 hover:opacity-100"
             )}
             title="Previous month"
+            type="button"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
 
           <div
-            className="flex items-center justify-center font-medium text-base relative select-none"
+            className="flex items-center justify-center font-medium text-base relative"
             ref={yearRef}
           >
             <div className="flex items-center gap-1">
@@ -197,6 +198,7 @@ function Calendar({
               "h-7 w-7 bg-transparent p-0 opacity-70 hover:opacity-100"
             )}
             title="Next month"
+            type="button"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
@@ -206,40 +208,11 @@ function Calendar({
     [props.onMonthChange]
   );
 
-  // Base class names - memoized to prevent recalculation
-  const baseClassNames = React.useMemo(
+  // Icons component
+  const Icons = React.useMemo(
     () => ({
-      months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-      month: "space-y-4",
-      caption: "flex justify-center pt-1 relative items-center",
-      caption_label: "text-base font-medium",
-      nav: "space-x-1 flex items-center",
-      nav_button: cn(
-        buttonVariants({ variant: "ghost", size: "icon" }),
-        "h-8 w-8 bg-transparent p-0 opacity-70 hover:opacity-100 transition-opacity"
-      ),
-      nav_button_previous: "absolute left-1",
-      nav_button_next: "absolute right-1",
-      table: "w-full border-collapse space-y-1",
-      head_row: "flex",
-      head_cell:
-        "text-muted-foreground rounded-md w-9 font-medium text-[0.8rem] uppercase",
-      row: "flex w-full mt-2",
-      cell: "h-9 w-9 text-center text-sm p-0 relative focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent/50 first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md",
-      day: cn(
-        buttonVariants({ variant: "ghost" }),
-        "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-accent hover:text-accent-foreground rounded-full transition-colors"
-      ),
-      day_range_end: "day-range-end",
-      day_selected:
-        "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-full",
-      day_today: "bg-accent text-accent-foreground rounded-full font-semibold",
-      day_outside:
-        "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
-      day_disabled: "text-muted-foreground opacity-50",
-      day_range_middle:
-        "aria-selected:bg-accent aria-selected:text-accent-foreground",
-      day_hidden: "invisible",
+      IconLeft: () => <ChevronLeft className="h-4 w-4 stroke-2" />,
+      IconRight: () => <ChevronRight className="h-4 w-4 stroke-2" />,
     }),
     []
   );
@@ -257,7 +230,6 @@ function Calendar({
         ...Icons,
         Caption: YearDropdown,
       }}
-      onDayClick={handleDayClick}
       fromYear={1950}
       toYear={2050}
       {...props}

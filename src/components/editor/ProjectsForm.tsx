@@ -163,11 +163,7 @@ const ProjectsForm = () => {
                       <Calendar
                         mode="single"
                         selected={newProject.startDate ? new Date(newProject.startDate) : undefined}
-                        onDayClick={(day, modifiers) => {
-                          if (!modifiers.disabled) {
-                            handleDateChange(day, "start");
-                          }
-                        }}
+                        onSelect={(date) => handleDateChange(date, "start")}
                         initialFocus
                       />
                     </PopoverContent>
@@ -200,11 +196,7 @@ const ProjectsForm = () => {
                       <Calendar
                         mode="single"
                         selected={newProject.endDate ? new Date(newProject.endDate) : undefined}
-                        onDayClick={(day, modifiers) => {
-                          if (!modifiers.disabled) {
-                            handleDateChange(day, "end");
-                          }
-                        }}
+                        onSelect={(date) => handleDateChange(date, "end")}
                         fromDate={newProject.startDate ? new Date(newProject.startDate) : undefined}
                         initialFocus
                       />
