@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -163,7 +164,7 @@ const ExtracurricularForm = () => {
                       <Calendar
                         mode="single"
                         selected={newActivity.startDate ? new Date(newActivity.startDate) : undefined}
-                        onSelect={(date) => handleDateChange(date, "start")}
+                        onDayClick={(day) => handleDateChange(day, "start")}
                         initialFocus
                       />
                     </PopoverContent>
@@ -196,7 +197,7 @@ const ExtracurricularForm = () => {
                       <Calendar
                         mode="single"
                         selected={newActivity.endDate ? new Date(newActivity.endDate) : undefined}
-                        onSelect={(date) => handleDateChange(date, "end")}
+                        onDayClick={(day) => handleDateChange(day, "end")}
                         fromDate={newActivity.startDate ? new Date(newActivity.startDate) : undefined}
                         initialFocus
                       />

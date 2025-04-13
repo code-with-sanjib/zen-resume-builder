@@ -196,7 +196,7 @@ const InternshipsForm = () => {
                       <Calendar
                         mode="single"
                         selected={newInternship.startDate ? new Date(newInternship.startDate) : undefined}
-                        onSelect={(date) => handleDateChange(date, "start")}
+                        onDayClick={(day) => handleDateChange(day, "start")}
                         initialFocus
                       />
                     </PopoverContent>
@@ -230,7 +230,7 @@ const InternshipsForm = () => {
                         <Calendar
                           mode="single"
                           selected={newInternship.endDate ? new Date(newInternship.endDate) : undefined}
-                          onSelect={(date) => handleDateChange(date, "end")}
+                          onDayClick={(day) => handleDateChange(day, "end")}
                           fromDate={newInternship.startDate ? new Date(newInternship.startDate) : undefined}
                           initialFocus
                         />

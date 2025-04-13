@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
-import { DayPicker } from "react-day-picker";
+import { DayPicker, type DayClickEventHandler } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -16,10 +16,10 @@ function Calendar({
 }: CalendarProps) {
   const { toast } = useToast();
   
-  // Enhanced onSelect handler that shows toast for invalid dates
-  const handleSelect = React.useCallback((day: Date | undefined, selectedDay: Date | undefined, modifiers: any) => {
+  // Enhanced day click handler that shows toast for invalid dates
+  const handleDayClick: DayClickEventHandler = React.useCallback((day, modifiers, e) => {
     // Check if the day is disabled
-    if (!day || (modifiers && modifiers.disabled)) {
+    if (modifiers.disabled) {
       toast({
         title: "Invalid date selection",
         description: "Please select a valid date",
@@ -28,16 +28,11 @@ function Calendar({
       return;
     }
     
-    // Call original onSelect if provided
-    if (props.onSelect) {
-      props.onSelect(day, selectedDay, modifiers);
+    // Call original onDayClick if provided
+    if (props.onDayClick) {
+      props.onDayClick(day, modifiers, e);
     }
-    
-    // Close calendar by triggering the popover's onOpenChange 
-    if (day && props.onDayClick) {
-      props.onDayClick(day, modifiers || {}, {} as React.MouseEvent);
-    }
-  }, [props.onSelect, props.onDayClick, toast]);
+  }, [props.onDayClick, toast]);
   
   // Memoize components to prevent unnecessary re-renders
   const Icons = React.useMemo(
@@ -262,7 +257,7 @@ function Calendar({
         ...Icons,
         Caption: YearDropdown,
       }}
-      onSelect={handleSelect}
+      onDayClick={handleDayClick}
       fromYear={1950}
       toYear={2050}
       {...props}
