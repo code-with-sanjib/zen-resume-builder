@@ -164,7 +164,11 @@ const ExtracurricularForm = () => {
                       <Calendar
                         mode="single"
                         selected={newActivity.startDate ? new Date(newActivity.startDate) : undefined}
-                        onDayClick={(day) => handleDateChange(day, "start")}
+                        onDayClick={(day, modifiers) => {
+                          if (!modifiers.disabled) {
+                            handleDateChange(day, "start");
+                          }
+                        }}
                         initialFocus
                       />
                     </PopoverContent>
@@ -197,7 +201,11 @@ const ExtracurricularForm = () => {
                       <Calendar
                         mode="single"
                         selected={newActivity.endDate ? new Date(newActivity.endDate) : undefined}
-                        onDayClick={(day) => handleDateChange(day, "end")}
+                        onDayClick={(day, modifiers) => {
+                          if (!modifiers.disabled) {
+                            handleDateChange(day, "end");
+                          }
+                        }}
                         fromDate={newActivity.startDate ? new Date(newActivity.startDate) : undefined}
                         initialFocus
                       />
