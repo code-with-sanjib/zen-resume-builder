@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -162,6 +163,7 @@ const ProjectsForm = () => {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
+                        selected={newProject.startDate ? new Date(newProject.startDate) : undefined}
                         onSelect={(date) => handleDateChange(date, "start")}
                         initialFocus
                       />
@@ -194,6 +196,7 @@ const ProjectsForm = () => {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
+                        selected={newProject.endDate ? new Date(newProject.endDate) : undefined}
                         onSelect={(date) => handleDateChange(date, "end")}
                         fromDate={newProject.startDate ? new Date(newProject.startDate) : undefined}
                         initialFocus

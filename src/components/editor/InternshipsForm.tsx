@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -194,6 +195,7 @@ const InternshipsForm = () => {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
+                        selected={newInternship.startDate ? new Date(newInternship.startDate) : undefined}
                         onSelect={(date) => handleDateChange(date, "start")}
                         initialFocus
                       />
@@ -227,6 +229,7 @@ const InternshipsForm = () => {
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
+                          selected={newInternship.endDate ? new Date(newInternship.endDate) : undefined}
                           onSelect={(date) => handleDateChange(date, "end")}
                           fromDate={newInternship.startDate ? new Date(newInternship.startDate) : undefined}
                           initialFocus
