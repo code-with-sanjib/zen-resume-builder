@@ -39,7 +39,7 @@ const ExtracurricularForm = () => {
       return;
     }
 
-    addExtracurricular(newActivity, {});
+    addExtracurricular(newActivity);
     setNewActivity({
       title: "",
       startDate: "",

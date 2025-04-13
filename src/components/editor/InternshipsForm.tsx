@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -43,8 +42,7 @@ const InternshipsForm = () => {
       return;
     }
 
-    // Fix: Pass an empty object as the second argument
-    addInternship(newInternship, {});
+    addInternship(newInternship);
     setNewInternship({
       jobTitle: "",
       company: "",
