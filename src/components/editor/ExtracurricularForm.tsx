@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,7 +24,6 @@ const ExtracurricularForm = () => {
     description: "",
   });
   
-  // New state to track open popovers
   const [datePopoverOpen, setDatePopoverOpen] = useState<{
     id?: string;
     type: "start" | "end";
@@ -73,21 +71,18 @@ const ExtracurricularForm = () => {
     reorderExtracurricular(items);
   };
   
-  // Handle date changes
   const handleDateChange = (date: Date | undefined, type: "start" | "end", id?: string) => {
     if (!date) return;
     
     const dateStr = date.toISOString();
     
     if (id) {
-      // Update existing activity
       const activity = resume.extracurricular?.find(item => item.id === id);
       if (activity) {
         const updatedActivity = { ...activity };
         
         if (type === "start") {
           updatedActivity.startDate = dateStr;
-          // Clear end date if it's before start date
           if (updatedActivity.endDate && new Date(updatedActivity.endDate) < date) {
             updatedActivity.endDate = "";
           }
@@ -98,12 +93,10 @@ const ExtracurricularForm = () => {
         updateExtracurricular(updatedActivity);
       }
     } else {
-      // Update new activity
       if (type === "start") {
         setNewActivity({ 
           ...newActivity, 
           startDate: dateStr,
-          // Clear end date if it's before the new start date
           endDate: newActivity.endDate && new Date(newActivity.endDate) < date ? "" : newActivity.endDate
         });
       } else {
@@ -111,7 +104,6 @@ const ExtracurricularForm = () => {
       }
     }
     
-    // Close the popover after selection
     setDatePopoverOpen(null);
   };
 

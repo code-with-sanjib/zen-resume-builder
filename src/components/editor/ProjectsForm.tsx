@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,7 +24,6 @@ const ProjectsForm = () => {
     endDate: "",
   });
   
-  // New state to track open popovers
   const [datePopoverOpen, setDatePopoverOpen] = useState<{
     id?: string;
     type: "start" | "end";
@@ -73,21 +71,18 @@ const ProjectsForm = () => {
     reorderProjects(items);
   };
   
-  // Handle date changes
   const handleDateChange = (date: Date | undefined, type: "start" | "end", id?: string) => {
     if (!date) return;
     
     const dateStr = date.toISOString();
     
     if (id) {
-      // Update existing project
       const project = resume.projects?.find(item => item.id === id);
       if (project) {
         const updatedProject = { ...project };
         
         if (type === "start") {
           updatedProject.startDate = dateStr;
-          // Clear end date if it's before start date
           if (updatedProject.endDate && new Date(updatedProject.endDate) < date) {
             updatedProject.endDate = "";
           }
@@ -98,12 +93,10 @@ const ProjectsForm = () => {
         updateProject(updatedProject);
       }
     } else {
-      // Update new project
       if (type === "start") {
         setNewProject({ 
           ...newProject, 
           startDate: dateStr,
-          // Clear end date if it's before the new start date
           endDate: newProject.endDate && new Date(newProject.endDate) < date ? "" : newProject.endDate
         });
       } else {
@@ -111,7 +104,6 @@ const ProjectsForm = () => {
       }
     }
     
-    // Close the popover after selection
     setDatePopoverOpen(null);
   };
   

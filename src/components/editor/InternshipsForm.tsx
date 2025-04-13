@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -28,7 +27,6 @@ const InternshipsForm = () => {
     description: "",
   });
   
-  // New state to track open popovers
   const [datePopoverOpen, setDatePopoverOpen] = useState<{
     id?: string;
     type: "start" | "end";
@@ -77,22 +75,19 @@ const InternshipsForm = () => {
     
     reorderInternships(items);
   };
-  
-  // Handle date changes
+
   const handleDateChange = (date: Date | undefined, type: "start" | "end", id?: string) => {
     if (!date) return;
     
     const dateStr = date.toISOString();
     
     if (id) {
-      // Update existing internship
       const internship = resume.internships?.find(item => item.id === id);
       if (internship) {
         const updatedInternship = { ...internship };
         
         if (type === "start") {
           updatedInternship.startDate = dateStr;
-          // Clear end date if it's before start date and not current
           if (!updatedInternship.current && updatedInternship.endDate && new Date(updatedInternship.endDate) < date) {
             updatedInternship.endDate = "";
           }
@@ -103,12 +98,10 @@ const InternshipsForm = () => {
         updateInternship(updatedInternship);
       }
     } else {
-      // Update new internship
       if (type === "start") {
         setNewInternship({ 
           ...newInternship, 
           startDate: dateStr,
-          // Clear end date if it's before the new start date and not current
           endDate: !newInternship.current && newInternship.endDate && new Date(newInternship.endDate) < date 
             ? "" 
             : newInternship.endDate
@@ -118,7 +111,6 @@ const InternshipsForm = () => {
       }
     }
     
-    // Close the popover after selection
     setDatePopoverOpen(null);
   };
 
