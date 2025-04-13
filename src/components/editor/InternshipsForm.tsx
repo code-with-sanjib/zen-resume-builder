@@ -42,7 +42,7 @@ const InternshipsForm = () => {
       return;
     }
 
-    addInternship(newInternship, {});
+    addInternship(newInternship);
     setNewInternship({
       jobTitle: "",
       company: "",

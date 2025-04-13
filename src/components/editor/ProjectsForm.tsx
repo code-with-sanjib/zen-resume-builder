@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -39,7 +40,7 @@ const ProjectsForm = () => {
       return;
     }
 
-    addProject(newProject, {});
+    addProject(newProject);
     setNewProject({
       title: "",
       description: "",
