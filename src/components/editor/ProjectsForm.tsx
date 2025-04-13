@@ -39,7 +39,7 @@ const ProjectsForm = () => {
       return;
     }
 
-    addProject(newProject);
+    addProject(newProject, {});
     setNewProject({
       title: "",
       description: "",
