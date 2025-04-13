@@ -18,12 +18,11 @@ function Calendar({
   ...props
 }: CalendarProps) {
   const { toast } = useToast();
-  const [internalProps, setInternalProps] = React.useState({...props});
   
   // Enhanced onSelect handler that closes the calendar
-  const handleSelect: SelectSingleEventHandler = React.useCallback((day, selectedDay, activeModifiers) => {
-    // Check if the day is disabled (would be different for each form's requirements)
-    if (activeModifiers.disabled) {
+  const handleSelect: SelectSingleEventHandler = (day, selectedDay, activeModifiers) => {
+    // Check if the day is disabled
+    if (!day || (activeModifiers && activeModifiers.disabled)) {
       toast({
         title: "Invalid date selection",
         description: "Please select a valid date",
@@ -40,12 +39,9 @@ function Calendar({
     // Close calendar by triggering the popover's onOpenChange 
     // The parent component should handle this by closing the popover
     if (day && props.onDayClick) {
-      props.onDayClick(day, activeModifiers, new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      }));
+      props.onDayClick(day, activeModifiers || {}, {} as React.MouseEvent<Element, MouseEvent>);
     }
-  }, [onSelect, props.onDayClick, toast]);
+  };
   
   // Memoize components to prevent unnecessary re-renders
   const Icons = React.useMemo(
@@ -265,7 +261,7 @@ function Calendar({
         ...baseClassNames,
         ...classNames,
       }}
-      captionLayout="custom"
+      captionLayout="buttons"
       components={{
         ...Icons,
         Caption: YearDropdown,
