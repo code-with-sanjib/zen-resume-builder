@@ -1,28 +1,25 @@
 
 import * as React from "react";
 import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
-import { DayPicker, SelectSingleEventHandler } from "react-day-picker";
+import { DayPicker } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
-  onSelect?: SelectSingleEventHandler;
-};
+export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
-  onSelect,
   ...props
 }: CalendarProps) {
   const { toast } = useToast();
   
-  // Enhanced onSelect handler that closes the calendar
-  const handleSelect: SelectSingleEventHandler = (day, selectedDay, activeModifiers) => {
+  // Enhanced onSelect handler that shows toast for invalid dates
+  const handleSelect = React.useCallback((day: Date | undefined, selectedDay: Date | undefined, modifiers: any) => {
     // Check if the day is disabled
-    if (!day || (activeModifiers && activeModifiers.disabled)) {
+    if (!day || (modifiers && modifiers.disabled)) {
       toast({
         title: "Invalid date selection",
         description: "Please select a valid date",
@@ -32,16 +29,15 @@ function Calendar({
     }
     
     // Call original onSelect if provided
-    if (onSelect) {
-      onSelect(day, selectedDay, activeModifiers);
+    if (props.onSelect) {
+      props.onSelect(day, selectedDay, modifiers);
     }
     
     // Close calendar by triggering the popover's onOpenChange 
-    // The parent component should handle this by closing the popover
     if (day && props.onDayClick) {
-      props.onDayClick(day, activeModifiers || {}, {} as React.MouseEvent<Element, MouseEvent>);
+      props.onDayClick(day, modifiers || {}, {} as React.MouseEvent);
     }
-  };
+  }, [props.onSelect, props.onDayClick, toast]);
   
   // Memoize components to prevent unnecessary re-renders
   const Icons = React.useMemo(
