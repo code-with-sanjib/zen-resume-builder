@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -40,7 +39,7 @@ const ExtracurricularForm = () => {
       return;
     }
 
-    addExtracurricular(newActivity);
+    addExtracurricular(newActivity, {});
     setNewActivity({
       title: "",
       startDate: "",

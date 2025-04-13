@@ -43,7 +43,8 @@ const InternshipsForm = () => {
       return;
     }
 
-    addInternship(newInternship);
+    // Fix: Pass an empty object as the second argument
+    addInternship(newInternship, {});
     setNewInternship({
       jobTitle: "",
       company: "",
