@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -42,7 +43,7 @@ const InternshipsForm = () => {
       return;
     }
 
-    addInternship(newInternship);
+    addInternship(newInternship, resume.internships || []);
     setNewInternship({
       jobTitle: "",
       company: "",
@@ -95,7 +96,7 @@ const InternshipsForm = () => {
           updatedInternship.endDate = dateStr;
         }
         
-        updateInternship(updatedInternship);
+        updateInternship(updatedInternship, resume.internships || []);
       }
     } else {
       if (type === "start") {

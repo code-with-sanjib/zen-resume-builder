@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -39,7 +40,7 @@ const ProjectsForm = () => {
       return;
     }
 
-    addProject(newProject);
+    addProject(newProject, resume.projects || []);
     setNewProject({
       title: "",
       description: "",
@@ -90,7 +91,7 @@ const ProjectsForm = () => {
           updatedProject.endDate = dateStr;
         }
         
-        updateProject(updatedProject);
+        updateProject(updatedProject, resume.projects || []);
       }
     } else {
       if (type === "start") {
