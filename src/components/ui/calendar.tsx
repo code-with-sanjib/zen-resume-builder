@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
-import { DayPicker } from "react-day-picker";
+import { DayPicker, DayClickEventHandler } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 
@@ -227,6 +227,13 @@ function Calendar({
     []
   );
 
+  // Custom day click handler to properly handle the DayClickEventHandler type
+  const handleDayClick: DayClickEventHandler = (day, modifiers, e) => {
+    if (props.mode === "single" && typeof props.onSelect === "function" && modifiers.available !== false) {
+      props.onSelect(day);
+    }
+  };
+
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -246,11 +253,7 @@ function Calendar({
       }}
       fromYear={1950}
       toYear={2050}
-      onDayClick={(day, modifiers, e, activeModifiers) => {
-        if (props.mode === "single" && typeof props.onSelect === "function") {
-          props.onSelect(day);
-        }
-      }}
+      onDayClick={handleDayClick}
       {...props}
     />
   );
