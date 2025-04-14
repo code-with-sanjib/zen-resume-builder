@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -105,9 +104,10 @@ const ExtracurricularForm = () => {
       }
     }
     
+    // Close the popover
     setDatePopoverOpen(null);
   };
-
+  
   const activities = resume.extracurricular || [];
 
   return (

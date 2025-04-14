@@ -105,6 +105,7 @@ const ProjectsForm = () => {
       }
     }
     
+    // Close the popover
     setDatePopoverOpen(null);
   };
   
