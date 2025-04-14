@@ -1,9 +1,9 @@
+
 import * as React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { DayPicker, SelectSingleEventHandler } from "react-day-picker";
+import { DayPicker } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
@@ -13,68 +13,16 @@ function Calendar({
   showOutsideDays = true,
   ...props
 }: CalendarProps) {
-  // Get current year for default selection
   const today = new Date();
   const currentYear = today.getFullYear();
   
-  // Track the selected year
-  const [selectedYear, setSelectedYear] = React.useState<number>(
-    props.selected instanceof Date ? props.selected.getFullYear() : currentYear
+  // Calculate from 1950 to current year
+  const fromYear = 1950;
+  const toYear = currentYear;
+  const yearRange = Array.from(
+    { length: toYear - fromYear + 1 },
+    (_, i) => fromYear + i
   );
-  
-  // Generate an array of years (10 years before and after current year)
-  const years = React.useMemo(() => {
-    const startYear = currentYear - 10;
-    const endYear = currentYear + 10;
-    return Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
-  }, [currentYear]);
-
-  // Create a custom caption component that includes year dropdown
-  const CustomCaption = React.useCallback(({ displayMonth }: { displayMonth: Date }) => {
-    const handleYearSelect = (selectedValue: string) => {
-      const year = parseInt(selectedValue);
-      setSelectedYear(year);
-      
-      // Create a new date with the selected year but keep current month
-      const newDate = new Date(displayMonth);
-      newDate.setFullYear(year);
-      
-      // Call the DayPicker's goToMonth function
-      if (props.onMonthChange) {
-        props.onMonthChange(newDate);
-      }
-    };
-
-    return (
-      <div className="flex items-center justify-center space-x-2">
-        <Select 
-          value={displayMonth.getFullYear().toString()}
-          onValueChange={handleYearSelect}
-        >
-          <SelectTrigger className="w-[100px] h-7 text-xs">
-            <SelectValue placeholder={displayMonth.getFullYear().toString()} />
-          </SelectTrigger>
-          <SelectContent className="max-h-[200px] overflow-y-auto">
-            {years.map((year) => (
-              <SelectItem key={year} value={year.toString()}>
-                {year}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <span className="text-sm font-medium">
-          {displayMonth.toLocaleString('default', { month: 'long' })}
-        </span>
-      </div>
-    );
-  }, [props.onMonthChange, years]);
-
-  // Create a wrapper around the original onSelect function to close the popover
-  const handleSelect: SelectSingleEventHandler = React.useCallback((day, selected, activeModifiers, e) => {
-    if (props.onSelect) {
-      props.onSelect(day, selected, activeModifiers, e);
-    }
-  }, [props.onSelect]);
 
   return (
     <DayPicker
@@ -84,7 +32,7 @@ function Calendar({
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
         caption: "flex justify-center pt-1 relative items-center",
-        caption_label: "hidden", // Hide default caption label as we're using custom
+        caption_label: "text-sm font-medium",
         nav: "space-x-1 flex items-center",
         nav_button: cn(
           buttonVariants({ variant: "outline", size: "icon" }),
@@ -116,9 +64,10 @@ function Calendar({
       components={{
         IconLeft: () => <ChevronLeft className="h-4 w-4" />,
         IconRight: () => <ChevronRight className="h-4 w-4" />,
-        Caption: CustomCaption
       }}
-      onSelect={handleSelect}
+      captionLayout="dropdown"
+      fromYear={fromYear}
+      toYear={toYear}
       {...props}
     />
   );
