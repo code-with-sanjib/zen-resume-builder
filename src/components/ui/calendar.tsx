@@ -246,7 +246,7 @@ function Calendar({
       }}
       fromYear={1950}
       toYear={2050}
-      onDayClick={(day) => {
+      onDayClick={(day, modifiers, e, activeModifiers) => {
         if (props.mode === "single" && typeof props.onSelect === "function") {
           props.onSelect(day);
         }
