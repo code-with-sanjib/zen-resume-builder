@@ -40,7 +40,7 @@ const ProjectsForm = () => {
       return;
     }
 
-    addProject(newProject, resume.projects || []);
+    addProject(newProject);
     setNewProject({
       title: "",
       description: "",
@@ -91,7 +91,7 @@ const ProjectsForm = () => {
           updatedProject.endDate = dateStr;
         }
         
-        updateProject(updatedProject, resume.projects || []);
+        updateProject(updatedProject.id, updatedProject);
       }
     } else {
       if (type === "start") {

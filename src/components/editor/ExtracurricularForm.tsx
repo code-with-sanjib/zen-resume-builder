@@ -40,7 +40,7 @@ const ExtracurricularForm = () => {
       return;
     }
 
-    addExtracurricular(newActivity, resume.extracurricular || []);
+    addExtracurricular(newActivity);
     setNewActivity({
       title: "",
       startDate: "",
@@ -91,7 +91,7 @@ const ExtracurricularForm = () => {
           updatedActivity.endDate = dateStr;
         }
         
-        updateExtracurricular(updatedActivity, resume.extracurricular || []);
+        updateExtracurricular(updatedActivity.id, updatedActivity);
       }
     } else {
       if (type === "start") {

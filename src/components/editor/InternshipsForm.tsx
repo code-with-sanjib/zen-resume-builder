@@ -43,7 +43,7 @@ const InternshipsForm = () => {
       return;
     }
 
-    addInternship(newInternship, resume.internships || []);
+    addInternship(newInternship);
     setNewInternship({
       jobTitle: "",
       company: "",
@@ -96,7 +96,7 @@ const InternshipsForm = () => {
           updatedInternship.endDate = dateStr;
         }
         
-        updateInternship(updatedInternship, resume.internships || []);
+        updateInternship(updatedInternship.id, updatedInternship);
       }
     } else {
       if (type === "start") {
