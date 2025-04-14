@@ -56,7 +56,7 @@ function Calendar({
 
   // Create memoized caption component for better performance
   const CustomCaption = React.useCallback(
-    ({ displayMonth }: { displayMonth: Date }) => {
+    ({ displayMonth, onMonthChange }: { displayMonth: Date, onMonthChange: (date: Date) => void }) => {
       const [isOpen, setIsOpen] = React.useState(false);
       const yearRef = React.useRef<HTMLDivElement>(null);
       const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -115,23 +115,23 @@ function Calendar({
       // Handle year selection
       const handleYearSelect = React.useCallback(
         (year: number) => {
-          props.onMonthChange?.(new Date(year, displayMonth.getMonth(), 1));
+          onMonthChange(new Date(year, displayMonth.getMonth(), 1));
           setIsOpen(false);
         },
-        [displayMonth, props.onMonthChange]
+        [displayMonth, onMonthChange]
       );
 
       // Navigation handlers
       const handleNextMonth = () => {
         const nextMonth = new Date(displayMonth);
         nextMonth.setMonth(nextMonth.getMonth() + 1);
-        props.onMonthChange?.(nextMonth);
+        onMonthChange(nextMonth);
       };
 
       const handlePrevMonth = () => {
         const prevMonth = new Date(displayMonth);
         prevMonth.setMonth(prevMonth.getMonth() - 1);
-        props.onMonthChange?.(prevMonth);
+        onMonthChange(prevMonth);
       };
 
       return (
@@ -215,7 +215,7 @@ function Calendar({
         </div>
       );
     },
-    [props.onMonthChange, hideYearDropdown]
+    []
   );
 
   // Icons component
@@ -238,14 +238,18 @@ function Calendar({
       captionLayout="buttons"
       components={{
         ...Icons,
-        Caption: CustomCaption,
+        Caption: ({ displayMonth }) => 
+          CustomCaption({ 
+            displayMonth, 
+            onMonthChange: props.onMonthChange || (() => {}) 
+          }),
       }}
       fromYear={1950}
       toYear={2050}
       onDayClick={(day) => {
-        props.onSelect?.(day);
-        // By default, the calendar will automatically close when a day is selected.
-        // The parent popover managing the calendar visibility should respond to the onSelect callback.
+        if (props.mode === "single" && typeof props.onSelect === "function") {
+          props.onSelect(day);
+        }
       }}
       {...props}
     />
