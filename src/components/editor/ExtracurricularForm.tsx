@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -39,7 +40,7 @@ const ExtracurricularForm = () => {
       return;
     }
 
-    addExtracurricular(newActivity);
+    addExtracurricular(newActivity, {}); // Add empty object as second parameter
     setNewActivity({
       title: "",
       startDate: "",
@@ -90,7 +91,7 @@ const ExtracurricularForm = () => {
           updatedActivity.endDate = dateStr;
         }
         
-        updateExtracurricular(updatedActivity);
+        updateExtracurricular(updatedActivity, {}); // Add empty object as second parameter
       }
     } else {
       if (type === "start") {

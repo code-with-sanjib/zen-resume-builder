@@ -4,18 +4,18 @@ import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import { DayPicker } from "react-day-picker";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>;
+export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
+  hideYearDropdown?: boolean;
+};
 
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
+  hideYearDropdown = false,
   ...props
 }: CalendarProps) {
-  const { toast } = useToast();
-  
   // Base class names - memoized to prevent recalculation
   const baseClassNames = React.useMemo(
     () => ({
@@ -55,7 +55,7 @@ function Calendar({
   );
 
   // Create memoized caption component for better performance
-  const YearDropdown = React.useCallback(
+  const CustomCaption = React.useCallback(
     ({ displayMonth }: { displayMonth: Date }) => {
       const [isOpen, setIsOpen] = React.useState(false);
       const yearRef = React.useRef<HTMLDivElement>(null);
@@ -70,9 +70,15 @@ function Calendar({
       const currentYear = displayMonth.getFullYear();
       const currentMonth = monthNames[displayMonth.getMonth()];
 
-      // Years range for dropdown
+      // Years range for dropdown - from 1950 to current year + 10
       const years = React.useMemo(
-        () => Array.from({ length: 101 }, (_, i) => i + 1950),
+        () => {
+          const currentYear = new Date().getFullYear();
+          return Array.from(
+            { length: currentYear - 1950 + 11 }, 
+            (_, i) => i + 1950
+          );
+        },
         []
       );
 
@@ -96,11 +102,13 @@ function Calendar({
 
       // Scroll to selected year when dropdown opens
       React.useEffect(() => {
-        if (isOpen && selectedYearRef.current) {
-          selectedYearRef.current.scrollIntoView({
-            block: "center",
-            behavior: "smooth",
-          });
+        if (isOpen && selectedYearRef.current && dropdownRef.current) {
+          setTimeout(() => {
+            selectedYearRef.current?.scrollIntoView({
+              block: "center",
+              behavior: "smooth",
+            });
+          }, 100);
         }
       }, [isOpen]);
 
@@ -146,48 +154,50 @@ function Calendar({
           >
             <div className="flex items-center gap-1">
               <span className="font-medium text-lg">{currentMonth}</span>
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={() => setIsOpen(!isOpen)}
-                  className="inline-flex items-center gap-1 px-2 py-1 rounded hover:bg-accent transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/30"
-                  aria-haspopup="listbox"
-                  aria-expanded={isOpen}
-                >
-                  <span className="font-medium text-lg">{currentYear}</span>
-                  <ChevronDown
-                    className={`h-4 w-4 transition-transform duration-200 ${
-                      isOpen ? "rotate-180 transform" : ""
-                    }`}
-                  />
-                </button>
-
-                {isOpen && (
-                  <div
-                    ref={dropdownRef}
-                    className="absolute z-50 mt-1 w-40 max-h-64 overflow-auto rounded-md bg-popover shadow-md ring-1 ring-black ring-opacity-5"
-                    style={{ scrollbarWidth: "thin" }}
+              {!hideYearDropdown && (
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="inline-flex items-center gap-1 px-2 py-1 rounded hover:bg-accent transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/30"
+                    aria-haspopup="listbox"
+                    aria-expanded={isOpen}
                   >
-                    {years.map((year) => (
-                      <div
-                        key={year}
-                        ref={year === currentYear ? selectedYearRef : null}
-                        className={cn(
-                          "px-4 py-2 text-sm cursor-pointer hover:bg-accent/80 hover:text-accent-foreground transition-colors",
-                          year === currentYear
-                            ? "bg-primary/10 text-primary font-medium"
-                            : "text-foreground"
-                        )}
-                        onClick={() => handleYearSelect(year)}
-                        role="option"
-                        aria-selected={year === currentYear}
-                      >
-                        {year}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                    <span className="font-medium text-lg">{currentYear}</span>
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform duration-200 ${
+                        isOpen ? "rotate-180 transform" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {isOpen && (
+                    <div
+                      ref={dropdownRef}
+                      className="absolute z-50 mt-1 w-40 max-h-64 overflow-auto rounded-md bg-popover shadow-md ring-1 ring-black ring-opacity-5"
+                      style={{ scrollbarWidth: "thin" }}
+                    >
+                      {years.map((year) => (
+                        <div
+                          key={year}
+                          ref={year === currentYear ? selectedYearRef : null}
+                          className={cn(
+                            "px-4 py-2 text-sm cursor-pointer hover:bg-accent/80 hover:text-accent-foreground transition-colors",
+                            year === currentYear
+                              ? "bg-primary/10 text-primary font-medium"
+                              : "text-foreground"
+                          )}
+                          onClick={() => handleYearSelect(year)}
+                          role="option"
+                          aria-selected={year === currentYear}
+                        >
+                          {year}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -205,7 +215,7 @@ function Calendar({
         </div>
       );
     },
-    [props.onMonthChange]
+    [props.onMonthChange, hideYearDropdown]
   );
 
   // Icons component
@@ -220,7 +230,7 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
-      className={cn("p-3 pointer-events-auto rounded-lg shadow-sm", className)}
+      className={cn("p-3 pointer-events-auto rounded-lg shadow-sm bg-popover", className)}
       classNames={{
         ...baseClassNames,
         ...classNames,
@@ -228,10 +238,15 @@ function Calendar({
       captionLayout="buttons"
       components={{
         ...Icons,
-        Caption: YearDropdown,
+        Caption: CustomCaption,
       }}
       fromYear={1950}
       toYear={2050}
+      onDayClick={(day) => {
+        props.onSelect?.(day);
+        // By default, the calendar will automatically close when a day is selected.
+        // The parent popover managing the calendar visibility should respond to the onSelect callback.
+      }}
       {...props}
     />
   );

@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -39,7 +40,7 @@ const ProjectsForm = () => {
       return;
     }
 
-    addProject(newProject);
+    addProject(newProject, {}); // Add empty object as second parameter
     setNewProject({
       title: "",
       description: "",
@@ -90,7 +91,7 @@ const ProjectsForm = () => {
           updatedProject.endDate = dateStr;
         }
         
-        updateProject(updatedProject);
+        updateProject(updatedProject, {}); // Add empty object as second parameter
       }
     } else {
       if (type === "start") {
