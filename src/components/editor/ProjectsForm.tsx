@@ -163,7 +163,11 @@ const ProjectsForm = () => {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         value={newProject.startDate ? new Date(newProject.startDate) : undefined}
-                        onChange={(date) => handleDateChange(date as Date, "start")}
+                        onChange={(date) => {
+                          if (date instanceof Date) {
+                            handleDateChange(date, "start")
+                          }
+                        }}
                       />
                     </PopoverContent>
                   </Popover>
@@ -194,7 +198,11 @@ const ProjectsForm = () => {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         value={newProject.endDate ? new Date(newProject.endDate) : undefined}
-                        onChange={(date) => handleDateChange(date as Date, "end")}
+                        onChange={(date) => {
+                          if (date instanceof Date) {
+                            handleDateChange(date, "end")
+                          }
+                        }}
                         minDate={newProject.startDate ? new Date(newProject.startDate) : undefined}
                       />
                     </PopoverContent>

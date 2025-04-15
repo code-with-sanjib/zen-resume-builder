@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -124,9 +125,11 @@ const CoursesForm = () => {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         value={newCourse.startDate ? new Date(newCourse.startDate) : undefined}
-                        onChange={(date) => 
-                          date && setNewCourse({ ...newCourse, startDate: (date as Date).toISOString() })
-                        }
+                        onChange={(date) => {
+                          if (date instanceof Date) {
+                            setNewCourse({ ...newCourse, startDate: date.toISOString() });
+                          }
+                        }}
                         className="p-3"
                       />
                     </PopoverContent>
@@ -151,11 +154,13 @@ const CoursesForm = () => {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         value={newCourse.endDate ? new Date(newCourse.endDate) : undefined}
-                        onChange={(date) => 
-                          date && setNewCourse({ ...newCourse, endDate: (date as Date).toISOString() })
-                        }
-                        minDate={newCourse.startDate ? new Date(newCourse.startDate) : undefined}
+                        onChange={(date) => {
+                          if (date instanceof Date) {
+                            setNewCourse({ ...newCourse, endDate: date.toISOString() });
+                          }
+                        }}
                         className="p-3"
+                        minDate={newCourse.startDate ? new Date(newCourse.startDate) : undefined}
                       />
                     </PopoverContent>
                   </Popover>

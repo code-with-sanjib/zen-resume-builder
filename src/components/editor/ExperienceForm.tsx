@@ -244,9 +244,9 @@ const ExperienceForm = () => {
                   <Calendar
                     value={exp.endDate ? new Date(exp.endDate) : undefined}
                     onChange={(date) => handleDateChange(date as Date, "endDate", exp.id)}
-                    disabled={exp.current}
                     minDate={exp.startDate ? new Date(exp.startDate) : undefined}
                     className="p-3"
+                    tileDisabled={exp.current ? () => true : undefined}
                   />
                 </PopoverContent>
               </Popover>
@@ -349,9 +349,9 @@ const ExperienceForm = () => {
                   <Calendar
                     value={newExperience.endDate ? new Date(newExperience.endDate) : undefined}
                     onChange={(date) => handleDateChange(date as Date, "endDate")}
-                    disabled={newExperience.current}
                     minDate={newExperience.startDate ? new Date(newExperience.startDate) : undefined}
                     className="p-3"
+                    tileDisabled={newExperience.current ? () => true : undefined}
                   />
                 </PopoverContent>
               </Popover>

@@ -39,7 +39,6 @@ const CustomSectionsForm = () => {
   const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
   const [editingSectionName, setEditingSectionName] = useState("");
   
-  // Track which section is currently adding a new item
   const [addingItemToSectionId, setAddingItemToSectionId] = useState<string | null>(null);
   const [newItem, setNewItem] = useState({
     title: "",
@@ -88,7 +87,6 @@ const CustomSectionsForm = () => {
         title: newItem.title.trim()
       });
       
-      // Reset form
       setNewItem({
         title: "",
         location: "",
@@ -147,7 +145,6 @@ const CustomSectionsForm = () => {
 
   return (
     <div className="space-y-6">
-      {/* Existing custom sections - Adding null check here */}
       {resume.customSections && resume.customSections.length > 0 && (
         <div className="space-y-6">
           {resume.customSections.map((section) => (
@@ -193,7 +190,6 @@ const CustomSectionsForm = () => {
               </div>
               
               <div className="p-4">
-                {/* Items in this section - Adding null check here */}
                 <div className="space-y-4">
                   <DragDropContext onDragEnd={(result) => handleDragEnd(result, section.id)}>
                     <Droppable droppableId={`section-${section.id}`}>
@@ -279,7 +275,11 @@ const CustomSectionsForm = () => {
                                             <PopoverContent className="w-auto p-0" align="start">
                                               <Calendar
                                                 value={item.startDate ? new Date(item.startDate) : undefined}
-                                                onChange={(date) => handleDateChange(section.id, item.id, "startDate", date as Date)}
+                                                onChange={(date) => {
+                                                  if (date instanceof Date) {
+                                                    handleDateChange(section.id, item.id, "startDate", date);
+                                                  }
+                                                }}
                                                 className="p-3"
                                               />
                                             </PopoverContent>
@@ -301,7 +301,11 @@ const CustomSectionsForm = () => {
                                             <PopoverContent className="w-auto p-0" align="start">
                                               <Calendar
                                                 value={item.endDate ? new Date(item.endDate) : undefined}
-                                                onChange={(date) => handleDateChange(section.id, item.id, "endDate", date as Date)}
+                                                onChange={(date) => {
+                                                  if (date instanceof Date) {
+                                                    handleDateChange(section.id, item.id, "endDate", date);
+                                                  }
+                                                }}
                                                 className="p-3"
                                               />
                                             </PopoverContent>
@@ -440,10 +444,14 @@ const CustomSectionsForm = () => {
                             <PopoverContent className="w-auto p-0" align="start">
                               <Calendar
                                 value={newItem.startDate ? new Date(newItem.startDate) : undefined}
-                                onChange={(date) => date && setNewItem({
-                                  ...newItem,
-                                  startDate: format(date, "yyyy-MM")
-                                })}
+                                onChange={(date) => {
+                                  if (date instanceof Date) {
+                                    setNewItem({
+                                      ...newItem,
+                                      startDate: format(date, "yyyy-MM")
+                                    });
+                                  }
+                                }}
                                 className="p-3"
                               />
                             </PopoverContent>
@@ -465,10 +473,14 @@ const CustomSectionsForm = () => {
                             <PopoverContent className="w-auto p-0" align="start">
                               <Calendar
                                 value={newItem.endDate ? new Date(newItem.endDate) : undefined}
-                                onChange={(date) => date && setNewItem({
-                                  ...newItem,
-                                  endDate: format(date, "yyyy-MM")
-                                })}
+                                onChange={(date) => {
+                                  if (date instanceof Date) {
+                                    setNewItem({
+                                      ...newItem,
+                                      endDate: format(date, "yyyy-MM")
+                                    });
+                                  }
+                                }}
                                 className="p-3"
                               />
                             </PopoverContent>
@@ -531,7 +543,6 @@ const CustomSectionsForm = () => {
         </div>
       )}
       
-      {/* Add new section */}
       {isAddingSectionName ? (
         <div className="p-4 border border-gray-200 rounded-lg space-y-4 bg-white shadow-sm">
           <div className="flex items-center justify-between">
