@@ -1,9 +1,13 @@
-
 import { useResume } from "@/contexts/ResumeContext";
+import { useState } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Expand } from "lucide-react";
 import ClassicTemplate from "./ClassicTemplate";
 import ModernTemplate from "./ModernTemplate";
 import MinimalTemplate from "./MinimalTemplate";
 import ProfessionalTemplate from "./ProfessionalTemplate";
+import { sampleResume } from "@/data/sampleResume";
 import ExtracurricularSection from "./sections/ExtracurricularSection";
 import ReferencesSection from "./sections/ReferencesSection";
 import InternshipsSection from "./sections/InternshipsSection";
@@ -16,21 +20,25 @@ import CustomSections from "./CustomSections";
 
 const ResumePreview = () => {
   const { resume } = useResume();
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showSample, setShowSample] = useState(!resume.personal.fullName);
+
+  const previewResume = showSample ? sampleResume : resume;
   
   const renderTemplate = () => {
     // Render the main template based on selection
     const templateContent = (() => {
-      switch (resume.selectedTemplate) {
+      switch (previewResume.selectedTemplate) {
         case "classic":
-          return <ClassicTemplate resume={resume} />;
+          return <ClassicTemplate resume={previewResume} />;
         case "modern":
-          return <ModernTemplate resume={resume} />;
+          return <ModernTemplate resume={previewResume} />;
         case "minimal":
-          return <MinimalTemplate resume={resume} />;
+          return <MinimalTemplate resume={previewResume} />;
         case "professional":
-          return <ProfessionalTemplate resume={resume} />;
+          return <ProfessionalTemplate resume={previewResume} />;
         default:
-          return <ClassicTemplate resume={resume} />;
+          return <ClassicTemplate resume={previewResume} />;
       }
     })();
     
@@ -40,41 +48,41 @@ const ResumePreview = () => {
         {templateContent}
         <div className="mt-4 px-6">
           {/* New sections */}
-          {resume.extracurricular && resume.extracurricular.length > 0 && (
-            <ExtracurricularSection extracurricular={resume.extracurricular} />
+          {previewResume.extracurricular && previewResume.extracurricular.length > 0 && (
+            <ExtracurricularSection extracurricular={previewResume.extracurricular} />
           )}
           
-          {resume.references && resume.references.length > 0 && (
-            <ReferencesSection references={resume.references} />
+          {previewResume.references && previewResume.references.length > 0 && (
+            <ReferencesSection references={previewResume.references} />
           )}
           
-          {resume.internships && resume.internships.length > 0 && (
-            <InternshipsSection internships={resume.internships} />
+          {previewResume.internships && previewResume.internships.length > 0 && (
+            <InternshipsSection internships={previewResume.internships} />
           )}
           
-          {resume.languages && resume.languages.length > 0 && (
-            <LanguagesSection languages={resume.languages} />
+          {previewResume.languages && previewResume.languages.length > 0 && (
+            <LanguagesSection languages={previewResume.languages} />
           )}
           
-          {resume.hobbies && resume.hobbies.length > 0 && (
-            <HobbiesSection hobbies={resume.hobbies} />
+          {previewResume.hobbies && previewResume.hobbies.length > 0 && (
+            <HobbiesSection hobbies={previewResume.hobbies} />
           )}
           
-          {resume.courses && resume.courses.length > 0 && (
-            <CoursesSection courses={resume.courses} />
+          {previewResume.courses && previewResume.courses.length > 0 && (
+            <CoursesSection courses={previewResume.courses} />
           )}
           
-          {resume.projects && resume.projects.length > 0 && (
-            <ProjectsSection projects={resume.projects} />
+          {previewResume.projects && previewResume.projects.length > 0 && (
+            <ProjectsSection projects={previewResume.projects} />
           )}
           
-          {resume.links && resume.links.length > 0 && (
-            <LinksSection links={resume.links} />
+          {previewResume.links && previewResume.links.length > 0 && (
+            <LinksSection links={previewResume.links} />
           )}
           
           {/* Keep custom sections for backward compatibility */}
-          {resume.customSections && resume.customSections.length > 0 && (
-            <CustomSections customSections={resume.customSections} />
+          {previewResume.customSections && previewResume.customSections.length > 0 && (
+            <CustomSections customSections={previewResume.customSections} />
           )}
         </div>
       </>
@@ -82,8 +90,37 @@ const ResumePreview = () => {
   };
 
   return (
-    <div className="resume-preview overflow-auto">
+    <div className="resume-preview overflow-auto relative">
+      <div className="sticky top-0 right-0 flex justify-end gap-2 p-2 z-10">
+        {!resume.personal.fullName && (
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setShowSample(!showSample)}
+          >
+            {showSample ? "Show Empty Resume" : "Show Sample Resume"}
+          </Button>
+        )}
+        <Button 
+          variant="outline" 
+          size="icon"
+          onClick={() => setIsFullscreen(true)}
+        >
+          <Expand className="h-4 w-4" />
+        </Button>
+      </div>
+
       {renderTemplate()}
+
+      <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
+        <DialogContent className="max-w-[850px] h-[90vh]">
+          <div className="relative h-full overflow-auto bg-white p-8">
+            <div className="transform scale-90 origin-top">
+              {renderTemplate()}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
