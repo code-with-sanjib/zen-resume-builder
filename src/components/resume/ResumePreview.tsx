@@ -1,7 +1,9 @@
+
 import { useResume } from "@/contexts/ResumeContext";
 import ClassicTemplate from "./ClassicTemplate";
 import ModernTemplate from "./ModernTemplate";
 import MinimalTemplate from "./MinimalTemplate";
+import ProfessionalTemplate from "./ProfessionalTemplate";
 import ExtracurricularSection from "./sections/ExtracurricularSection";
 import ReferencesSection from "./sections/ReferencesSection";
 import InternshipsSection from "./sections/InternshipsSection";
@@ -25,6 +27,8 @@ const ResumePreview = () => {
           return <ModernTemplate resume={resume} />;
         case "minimal":
           return <MinimalTemplate resume={resume} />;
+        case "professional":
+          return <ProfessionalTemplate resume={resume} />;
         default:
           return <ClassicTemplate resume={resume} />;
       }

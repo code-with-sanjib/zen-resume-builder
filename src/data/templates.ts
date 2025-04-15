@@ -46,6 +46,17 @@ export const defaultTemplates: Template[] = [
     isCreative: false,
   },
   {
+    id: 'professional',
+    name: 'Professional',
+    description: 'Structured layout with clear section dividers',
+    thumbnail: '/lovable-uploads/aacdac04-ed3b-4ba4-a4e8-9b2bfb55064f.png',
+    color: '#000000',
+    isModern: false,
+    isMinimal: false,
+    isProfessional: true,
+    isCreative: false,
+  },
+  {
     id: 'executive',
     name: 'Executive',
     description: 'Sophisticated template for senior positions',
@@ -110,16 +121,5 @@ export const defaultTemplates: Template[] = [
     isMinimal: false,
     isProfessional: true,
     isCreative: true,
-  },
-  {
-    id: 'professional',
-    name: 'Professional',
-    description: 'Traditional layout with modern touches',
-    thumbnail: '/templates/professional.png',
-    color: '#457b9d',
-    isModern: false,
-    isMinimal: false,
-    isProfessional: true,
-    isCreative: false,
   }
 ];
