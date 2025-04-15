@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import PersonalInfoForm from "@/components/editor/PersonalInfoForm";
@@ -11,6 +12,7 @@ import LanguagesForm from "@/components/editor/LanguagesForm";
 import HobbiesForm from "@/components/editor/HobbiesForm";
 import CoursesForm from "@/components/editor/CoursesForm";
 import ProjectsForm from "@/components/editor/ProjectsForm";
+import LinksForm from "@/components/editor/LinksForm";
 import ResumePreview from "@/components/resume/ResumePreview";
 import ResumeExport from "@/components/editor/ResumeExport";
 import { useResume } from "@/contexts/ResumeContext";

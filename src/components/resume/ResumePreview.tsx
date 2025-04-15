@@ -9,6 +9,7 @@ import LanguagesSection from "./sections/LanguagesSection";
 import HobbiesSection from "./sections/HobbiesSection";
 import CoursesSection from "./sections/CoursesSection";
 import ProjectsSection from "./sections/ProjectsSection";
+import LinksSection from "./sections/LinksSection";
 import CustomSections from "./CustomSections";
 
 const ResumePreview = () => {
@@ -61,6 +62,10 @@ const ResumePreview = () => {
           
           {resume.projects && resume.projects.length > 0 && (
             <ProjectsSection projects={resume.projects} />
+          )}
+          
+          {resume.links && resume.links.length > 0 && (
+            <LinksSection links={resume.links} />
           )}
           
           {/* Keep custom sections for backward compatibility */}
