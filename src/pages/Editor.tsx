@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import PersonalInfoForm from "@/components/editor/PersonalInfoForm";
@@ -32,6 +31,7 @@ import {
   FolderKanban,
   ChevronLeft,
   ChevronRight,
+  Link as LinkIcon
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -65,6 +65,8 @@ const Editor = () => {
         return <CoursesForm />;
       case "projects":
         return <ProjectsForm />;
+      case "links":
+        return <LinksForm />;
       default:
         return <PersonalInfoForm />;
     }
@@ -190,6 +192,14 @@ const Editor = () => {
                 onClick={() => setActiveSection("projects")}
                 isMobile={isMobile}
               />
+              <NavItem 
+                id="links" 
+                label="Links" 
+                icon={<LinkIcon className="w-4 h-4" />}
+                active={activeSection === "links"} 
+                onClick={() => setActiveSection("links")}
+                isMobile={isMobile}
+              />
             </div>
             
             <div className="hidden lg:flex flex-col gap-2 p-4 border-t">
@@ -220,6 +230,7 @@ const Editor = () => {
                     {activeSection === "hobbies" && "Hobbies & Interests"}
                     {activeSection === "courses" && "Courses & Certifications"}
                     {activeSection === "projects" && "Projects"}
+                    {activeSection === "links" && "Links"}
                   </h3>
                   
                   {isMobile && (

@@ -120,6 +120,12 @@ export interface CustomSection {
   items: CustomSectionItem[];
 }
 
+export interface Link {
+  id: string;
+  label: string;
+  url: string;
+}
+
 export interface Resume {
   personal: PersonalInfo;
   experience: Experience[];
@@ -134,6 +140,7 @@ export interface Resume {
   projects: Project[];
   customSections: CustomSection[];
   selectedTemplate: string;
+  links: Link[];
 }
 
 const defaultResume: Resume = {
@@ -158,6 +165,7 @@ const defaultResume: Resume = {
   projects: [],
   customSections: [],
   selectedTemplate: defaultTemplates[0].id,
+  links: [],
 };
 
 interface ResumeContextType {
@@ -219,6 +227,10 @@ interface ResumeContextType {
   removeCustomSectionItem: (sectionId: string, itemId: string) => void;
   reorderCustomSectionItems: (sectionId: string, items: CustomSectionItem[]) => void;
   
+  addLink: (link: Omit<Link, 'id'>) => void;
+  removeLink: (id: string) => void;
+  reorderLinks: (items: Link[]) => void;
+  
   setSelectedTemplate: (templateId: string) => void;
 }
 
@@ -243,6 +255,7 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         courses: parsedResume.courses || [],
         projects: parsedResume.projects || [],
         customSections: parsedResume.customSections || [],
+        links: parsedResume.links || [],
       };
     }
     return defaultResume;
@@ -620,6 +633,28 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }));
   };
 
+  const addLink = (link: Omit<Link, 'id'>) => {
+    const id = crypto.randomUUID();
+    setResume(prev => ({
+      ...prev,
+      links: [...prev.links, { ...link, id }],
+    }));
+  };
+
+  const removeLink = (id: string) => {
+    setResume(prev => ({
+      ...prev,
+      links: prev.links.filter(link => link.id !== id),
+    }));
+  };
+
+  const reorderLinks = (items: Link[]) => {
+    setResume(prev => ({
+      ...prev,
+      links: items,
+    }));
+  };
+
   const setSelectedTemplate = (templateId: string) => {
     setResume(prev => ({
       ...prev,
@@ -675,6 +710,9 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       updateCustomSectionItem,
       removeCustomSectionItem,
       reorderCustomSectionItems,
+      addLink,
+      removeLink,
+      reorderLinks,
       setSelectedTemplate,
     }}>
       {children}
