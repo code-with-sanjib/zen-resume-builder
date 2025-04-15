@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Card, CardContent } from "@/components/ui/card";
@@ -124,12 +123,11 @@ const CoursesForm = () => {
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
-                        mode="single"
-                        onSelect={(date) => 
-                          date && setNewCourse({ ...newCourse, startDate: date.toISOString() })
+                        value={newCourse.startDate ? new Date(newCourse.startDate) : undefined}
+                        onChange={(date) => 
+                          date && setNewCourse({ ...newCourse, startDate: (date as Date).toISOString() })
                         }
-                        initialFocus
-                        className="p-3 pointer-events-auto"
+                        className="p-3"
                       />
                     </PopoverContent>
                   </Popover>
@@ -152,12 +150,12 @@ const CoursesForm = () => {
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
-                        mode="single"
-                        onSelect={(date) => 
-                          date && setNewCourse({ ...newCourse, endDate: date.toISOString() })
+                        value={newCourse.endDate ? new Date(newCourse.endDate) : undefined}
+                        onChange={(date) => 
+                          date && setNewCourse({ ...newCourse, endDate: (date as Date).toISOString() })
                         }
-                        initialFocus
-                        className="p-3 pointer-events-auto"
+                        minDate={newCourse.startDate ? new Date(newCourse.startDate) : undefined}
+                        className="p-3"
                       />
                     </PopoverContent>
                   </Popover>

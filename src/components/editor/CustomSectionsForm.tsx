@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Button } from "@/components/ui/button";
@@ -279,14 +278,9 @@ const CustomSectionsForm = () => {
                                             </PopoverTrigger>
                                             <PopoverContent className="w-auto p-0" align="start">
                                               <Calendar
-                                                mode="single"
-                                                selected={item.startDate ? new Date(item.startDate) : undefined}
-                                                onSelect={(date) => handleDateChange(section.id, item.id, "startDate", date)}
-                                                initialFocus
-                                                className="p-3 pointer-events-auto"
-                                                captionLayout="dropdown-buttons"
-                                                fromYear={1990}
-                                                toYear={2030}
+                                                value={item.startDate ? new Date(item.startDate) : undefined}
+                                                onChange={(date) => handleDateChange(section.id, item.id, "startDate", date as Date)}
+                                                className="p-3"
                                               />
                                             </PopoverContent>
                                           </Popover>
@@ -306,14 +300,9 @@ const CustomSectionsForm = () => {
                                             </PopoverTrigger>
                                             <PopoverContent className="w-auto p-0" align="start">
                                               <Calendar
-                                                mode="single"
-                                                selected={item.endDate ? new Date(item.endDate) : undefined}
-                                                onSelect={(date) => handleDateChange(section.id, item.id, "endDate", date)}
-                                                initialFocus
-                                                className="p-3 pointer-events-auto"
-                                                captionLayout="dropdown-buttons"
-                                                fromYear={1990}
-                                                toYear={2030}
+                                                value={item.endDate ? new Date(item.endDate) : undefined}
+                                                onChange={(date) => handleDateChange(section.id, item.id, "endDate", date as Date)}
+                                                className="p-3"
                                               />
                                             </PopoverContent>
                                           </Popover>
@@ -366,15 +355,8 @@ const CustomSectionsForm = () => {
                               )}
                             </Draggable>
                           )) : (
-                            <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-                              <p className="text-gray-500">No items in this section</p>
-                              <Button 
-                                variant="outline" 
-                                className="mt-2" 
-                                onClick={() => setAddingItemToSectionId(section.id)}
-                              >
-                                <Plus className="mr-2 h-4 w-4" /> Add Item
-                              </Button>
+                            <div className="text-center text-gray-500 py-8">
+                              No items in this section yet
                             </div>
                           )}
                           {provided.placeholder}
@@ -382,176 +364,167 @@ const CustomSectionsForm = () => {
                       )}
                     </Droppable>
                   </DragDropContext>
-                </div>
-                
-                {/* Add new item */}
-                {addingItemToSectionId === section.id ? (
-                  <div className="mt-4 p-4 border border-gray-200 rounded-md space-y-4 bg-white">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium">Add New Item</h4>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          setAddingItemToSectionId(null);
-                          setNewItem({
-                            title: "",
-                            location: "",
-                            startDate: "",
-                            endDate: "",
-                            description: "",
-                          });
-                        }}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="new-item-title" className="text-gray-600">
-                        Activity name, job title, book title etc.
-                      </Label>
-                      <Input
-                        id="new-item-title"
-                        value={newItem.title}
-                        onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
-                        placeholder="Activity name, job title, book title, etc."
-                        className="border-b-2 border-primary border-t-0 border-x-0 rounded-none px-0 focus-visible:ring-0"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="new-item-location" className="text-gray-600">City</Label>
-                      <Input
-                        id="new-item-location"
-                        value={newItem.location}
-                        onChange={(e) => setNewItem({ ...newItem, location: e.target.value })}
-                        placeholder="City, Country, etc."
-                        className="border-b-2 border-primary border-t-0 border-x-0 rounded-none px-0 focus-visible:ring-0"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label className="text-gray-600">Start & End Date</Label>
-                      <div className="grid grid-cols-2 gap-4">
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "w-full justify-start text-left font-normal bg-gray-50",
-                                !newItem.startDate && "text-gray-400"
-                              )}
-                            >
-                              <CalendarIcon className="mr-2 h-4 w-4" />
-                              {formatDisplayDate(newItem.startDate)}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={newItem.startDate ? new Date(newItem.startDate) : undefined}
-                              onSelect={(date) => date && setNewItem({
-                                ...newItem,
-                                startDate: format(date, "yyyy-MM")
-                              })}
-                              initialFocus
-                              className="p-3 pointer-events-auto"
-                              captionLayout="dropdown-buttons"
-                              fromYear={1990}
-                              toYear={2030}
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "w-full justify-start text-left font-normal bg-gray-50",
-                                !newItem.endDate && "text-gray-400"
-                              )}
-                            >
-                              <CalendarIcon className="mr-2 h-4 w-4" />
-                              {formatDisplayDate(newItem.endDate)}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={newItem.endDate ? new Date(newItem.endDate) : undefined}
-                              onSelect={(date) => date && setNewItem({
-                                ...newItem,
-                                endDate: format(date, "yyyy-MM")
-                              })}
-                              initialFocus
-                              className="p-3 pointer-events-auto"
-                              captionLayout="dropdown-buttons"
-                              fromYear={1990}
-                              toYear={2030}
-                            />
-                          </PopoverContent>
-                        </Popover>
+                  
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setAddingItemToSectionId(section.id)}
+                    className="w-full"
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Item to {section.title}
+                  </Button>
+                  
+                  {addingItemToSectionId === section.id && (
+                    <div className="border border-gray-200 rounded-lg p-4 space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-medium">Add New Item</h4>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            setAddingItemToSectionId(null);
+                            setNewItem({
+                              title: "",
+                              location: "",
+                              startDate: "",
+                              endDate: "",
+                              description: "",
+                            });
+                          }}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
                       </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="new-item-description" className="text-gray-600">
-                        Description
-                      </Label>
-                      <div className="border rounded-md">
-                        <div className="flex items-center border-b p-2 gap-1 bg-gray-50">
-                          <Button variant="ghost" size="icon" className="w-8 h-8">
-                            <Bold className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="w-8 h-8">
-                            <Italic className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="w-8 h-8">
-                            <Underline className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="w-8 h-8">
-                            <Strikethrough className="h-4 w-4" />
-                          </Button>
-                          <div className="w-px h-4 bg-gray-300 mx-1"></div>
-                          <Button variant="ghost" size="icon" className="w-8 h-8">
-                            <List className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="w-8 h-8">
-                            <ListOrdered className="h-4 w-4" />
-                          </Button>
-                          <div className="w-px h-4 bg-gray-300 mx-1"></div>
-                          <Button variant="ghost" size="icon" className="w-8 h-8">
-                            <Link className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <Textarea
-                          id="new-item-description"
-                          value={newItem.description}
-                          onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
-                          placeholder="Enter a description..."
-                          rows={6}
-                          className="border-0 rounded-none focus-visible:ring-0 resize-none"
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="new-item-title" className="text-gray-600">
+                          Activity name, job title, book title etc.
+                        </Label>
+                        <Input
+                          id="new-item-title"
+                          value={newItem.title}
+                          onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
+                          placeholder="Activity name, job title, book title, etc."
+                          className="border-b-2 border-primary border-t-0 border-x-0 rounded-none px-0 focus-visible:ring-0"
                         />
                       </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="new-item-location" className="text-gray-600">City</Label>
+                        <Input
+                          id="new-item-location"
+                          value={newItem.location}
+                          onChange={(e) => setNewItem({ ...newItem, location: e.target.value })}
+                          placeholder="City, Country, etc."
+                          className="border-b-2 border-primary border-t-0 border-x-0 rounded-none px-0 focus-visible:ring-0"
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label className="text-gray-600">Start & End Date</Label>
+                        <div className="grid grid-cols-2 gap-4">
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-full justify-start text-left font-normal bg-gray-50",
+                                  !newItem.startDate && "text-gray-400"
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {formatDisplayDate(newItem.startDate)}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                value={newItem.startDate ? new Date(newItem.startDate) : undefined}
+                                onChange={(date) => date && setNewItem({
+                                  ...newItem,
+                                  startDate: format(date, "yyyy-MM")
+                                })}
+                                className="p-3"
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-full justify-start text-left font-normal bg-gray-50",
+                                  !newItem.endDate && "text-gray-400"
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {formatDisplayDate(newItem.endDate)}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                value={newItem.endDate ? new Date(newItem.endDate) : undefined}
+                                onChange={(date) => date && setNewItem({
+                                  ...newItem,
+                                  endDate: format(date, "yyyy-MM")
+                                })}
+                                className="p-3"
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="new-item-description" className="text-gray-600">
+                          Description
+                        </Label>
+                        <div className="border rounded-md">
+                          <div className="flex items-center border-b p-2 gap-1 bg-gray-50">
+                            <Button variant="ghost" size="icon" className="w-8 h-8">
+                              <Bold className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="w-8 h-8">
+                              <Italic className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="w-8 h-8">
+                              <Underline className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="w-8 h-8">
+                              <Strikethrough className="h-4 w-4" />
+                            </Button>
+                            <div className="w-px h-4 bg-gray-300 mx-1"></div>
+                            <Button variant="ghost" size="icon" className="w-8 h-8">
+                              <List className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="w-8 h-8">
+                              <ListOrdered className="h-4 w-4" />
+                            </Button>
+                            <div className="w-px h-4 bg-gray-300 mx-1"></div>
+                            <Button variant="ghost" size="icon" className="w-8 h-8">
+                              <Link className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <Textarea
+                            id="new-item-description"
+                            value={newItem.description}
+                            onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
+                            placeholder="Enter a description..."
+                            rows={6}
+                            className="border-0 rounded-none focus-visible:ring-0 resize-none"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="flex justify-end pt-2">
+                        <Button onClick={() => handleAddItem(section.id)}>
+                          Add Item
+                        </Button>
+                      </div>
                     </div>
-                    
-                    <div className="flex justify-end pt-2">
-                      <Button onClick={() => handleAddItem(section.id)}>
-                        Add Item
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <Button
-                    variant="outline"
-                    className="mt-4 w-full border-dashed"
-                    onClick={() => setAddingItemToSectionId(section.id)}
-                  >
-                    <Plus className="mr-2 h-4 w-4" /> Add one more item
-                  </Button>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           ))}

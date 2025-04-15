@@ -111,7 +111,6 @@ const InternshipsForm = () => {
       }
     }
     
-    // Close the popover
     setDatePopoverOpen(null);
   };
   
@@ -194,10 +193,8 @@ const InternshipsForm = () => {
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
-                        mode="single"
-                        selected={newInternship.startDate ? new Date(newInternship.startDate) : undefined}
-                        onSelect={(date) => handleDateChange(date, "start")}
-                        initialFocus
+                        value={newInternship.startDate ? new Date(newInternship.startDate) : undefined}
+                        onChange={(date) => handleDateChange(date as Date, "start")}
                       />
                     </PopoverContent>
                   </Popover>
@@ -228,11 +225,9 @@ const InternshipsForm = () => {
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
-                          mode="single"
-                          selected={newInternship.endDate ? new Date(newInternship.endDate) : undefined}
-                          onSelect={(date) => handleDateChange(date, "end")}
-                          fromDate={newInternship.startDate ? new Date(newInternship.startDate) : undefined}
-                          initialFocus
+                          value={newInternship.endDate ? new Date(newInternship.endDate) : undefined}
+                          onChange={(date) => handleDateChange(date as Date, "end")}
+                          minDate={newInternship.startDate ? new Date(newInternship.startDate) : undefined}
                         />
                       </PopoverContent>
                     </Popover>

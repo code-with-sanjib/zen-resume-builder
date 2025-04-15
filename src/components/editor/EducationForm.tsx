@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Input } from "@/components/ui/input";
@@ -49,13 +48,11 @@ const EducationForm = () => {
   const handleDateChange = (date: Date | undefined, field: "startDate" | "endDate", id?: string) => {
     if (!date) return;
     
-    // Fix: Convert Date to ISO string safely
     const dateStr = date.toISOString();
     
     if (id) {
       const edu = resume.education.find(e => e.id === id);
       
-      // If setting end date, ensure it's after start date
       if (field === "endDate" && edu?.startDate && new Date(edu.startDate) > date) {
         toast({
           title: "Invalid date selection",
@@ -65,7 +62,6 @@ const EducationForm = () => {
         return;
       }
       
-      // If setting start date, ensure it's before end date
       if (field === "startDate" && edu?.endDate && new Date(edu.endDate) < date) {
         toast({
           title: "Invalid date selection",
@@ -77,7 +73,6 @@ const EducationForm = () => {
       
       updateEducation(id, { [field]: dateStr });
     } else {
-      // If setting end date, ensure it's after start date
       if (field === "endDate" && newEducation.startDate && new Date(newEducation.startDate) > date) {
         toast({
           title: "Invalid date selection",
@@ -87,7 +82,6 @@ const EducationForm = () => {
         return;
       }
       
-      // If setting start date, ensure it's before end date
       if (field === "startDate" && newEducation.endDate && new Date(newEducation.endDate) < date) {
         toast({
           title: "Invalid date selection",
@@ -104,7 +98,6 @@ const EducationForm = () => {
   const handleAddEducation = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate dates
     if (!newEducation.startDate) {
       toast({
         title: "Missing start date",
@@ -149,7 +142,6 @@ const EducationForm = () => {
 
   return (
     <div className="space-y-6">
-      {/* Existing education entries */}
       {resume.education.map((edu) => (
         <div key={edu.id} className="p-4 border border-gray-200 rounded-lg">
           <div className="flex justify-between items-start">
@@ -217,9 +209,8 @@ const EducationForm = () => {
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
-                    mode="single"
-                    onSelect={(date) => handleDateChange(date, "startDate", edu.id)}
-                    initialFocus
+                    value={edu.startDate ? new Date(edu.startDate) : undefined}
+                    onChange={(date) => handleDateChange(date as Date, "startDate", edu.id)}
                     className="p-3"
                   />
                 </PopoverContent>
@@ -244,10 +235,9 @@ const EducationForm = () => {
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
-                    mode="single"
-                    onSelect={(date) => handleDateChange(date, "endDate", edu.id)}
-                    fromDate={edu.startDate ? new Date(edu.startDate) : undefined}
-                    initialFocus
+                    value={edu.endDate ? new Date(edu.endDate) : undefined}
+                    onChange={(date) => handleDateChange(date as Date, "endDate", edu.id)}
+                    minDate={edu.startDate ? new Date(edu.startDate) : undefined}
                     className="p-3"
                   />
                 </PopoverContent>
@@ -266,7 +256,6 @@ const EducationForm = () => {
         </div>
       ))}
 
-      {/* Add new education form */}
       {isAdding ? (
         <form onSubmit={handleAddEducation} className="p-4 border border-gray-200 rounded-lg">
           <h4 className="font-medium mb-4">Add New Education</h4>
@@ -325,9 +314,8 @@ const EducationForm = () => {
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
-                    mode="single"
-                    onSelect={(date) => handleDateChange(date, "startDate")}
-                    initialFocus
+                    value={newEducation.startDate ? new Date(newEducation.startDate) : undefined}
+                    onChange={(date) => handleDateChange(date as Date, "startDate")}
                     className="p-3"
                   />
                 </PopoverContent>
@@ -352,10 +340,9 @@ const EducationForm = () => {
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
-                    mode="single"
-                    onSelect={(date) => handleDateChange(date, "endDate")}
-                    fromDate={newEducation.startDate ? new Date(newEducation.startDate) : undefined}
-                    initialFocus
+                    value={newEducation.endDate ? new Date(newEducation.endDate) : undefined}
+                    onChange={(date) => handleDateChange(date as Date, "endDate")}
+                    minDate={newEducation.startDate ? new Date(newEducation.startDate) : undefined}
                     className="p-3"
                   />
                 </PopoverContent>

@@ -8,7 +8,6 @@ export type CalendarProps = React.ComponentProps<typeof Calendar>;
 
 function CustomCalendar({
   className,
-  classNames,
   ...props
 }: CalendarProps) {
   return (
@@ -27,4 +26,3 @@ function CustomCalendar({
 CustomCalendar.displayName = "Calendar";
 
 export { CustomCalendar as Calendar };
-

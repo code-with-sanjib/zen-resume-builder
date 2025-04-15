@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useResume } from "@/contexts/ResumeContext";
 import { Input } from "@/components/ui/input";
@@ -65,13 +64,11 @@ const ExperienceForm = () => {
   const handleDateChange = (date: Date | undefined, field: "startDate" | "endDate", id?: string) => {
     if (!date) return;
     
-    // Fix: Convert Date to ISO string safely
     const dateStr = date.toISOString();
     
     if (id) {
       const exp = resume.experience.find(e => e.id === id);
       
-      // If setting end date, ensure it's after start date
       if (field === "endDate" && exp?.startDate && new Date(exp.startDate) > date) {
         toast({
           title: "Invalid date selection",
@@ -81,7 +78,6 @@ const ExperienceForm = () => {
         return;
       }
       
-      // If setting start date, ensure it's before end date
       if (field === "startDate" && exp?.endDate && !exp.current && new Date(exp.endDate) < date) {
         toast({
           title: "Invalid date selection",
@@ -93,7 +89,6 @@ const ExperienceForm = () => {
       
       updateExperience(id, { [field]: dateStr });
     } else {
-      // If setting end date, ensure it's after start date
       if (field === "endDate" && newExperience.startDate && new Date(newExperience.startDate) > date) {
         toast({
           title: "Invalid date selection",
@@ -103,7 +98,6 @@ const ExperienceForm = () => {
         return;
       }
       
-      // If setting start date, ensure it's before end date
       if (field === "startDate" && newExperience.endDate && !newExperience.current && new Date(newExperience.endDate) < date) {
         toast({
           title: "Invalid date selection",
@@ -120,7 +114,6 @@ const ExperienceForm = () => {
   const handleAddExperience = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate dates
     if (!newExperience.startDate) {
       toast({
         title: "Missing start date",
@@ -165,7 +158,6 @@ const ExperienceForm = () => {
 
   return (
     <div className="space-y-6">
-      {/* Existing experiences */}
       {resume.experience.map((exp) => (
         <div key={exp.id} className="p-4 border border-gray-200 rounded-lg">
           <div className="flex justify-between items-start">
@@ -223,9 +215,8 @@ const ExperienceForm = () => {
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
-                    mode="single"
-                    onSelect={(date) => handleDateChange(date, "startDate", exp.id)}
-                    initialFocus
+                    value={exp.startDate ? new Date(exp.startDate) : undefined}
+                    onChange={(date) => handleDateChange(date as Date, "startDate", exp.id)}
                     className="p-3"
                   />
                 </PopoverContent>
@@ -251,11 +242,10 @@ const ExperienceForm = () => {
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
-                    mode="single"
-                    onSelect={(date) => handleDateChange(date, "endDate", exp.id)}
+                    value={exp.endDate ? new Date(exp.endDate) : undefined}
+                    onChange={(date) => handleDateChange(date as Date, "endDate", exp.id)}
                     disabled={exp.current}
-                    fromDate={exp.startDate ? new Date(exp.startDate) : undefined}
-                    initialFocus
+                    minDate={exp.startDate ? new Date(exp.startDate) : undefined}
                     className="p-3"
                   />
                 </PopoverContent>
@@ -283,7 +273,6 @@ const ExperienceForm = () => {
         </div>
       ))}
 
-      {/* Add new experience form */}
       {isAdding ? (
         <form onSubmit={handleAddExperience} className="p-4 border border-gray-200 rounded-lg">
           <h4 className="font-medium mb-4">Add New Experience</h4>
@@ -331,9 +320,8 @@ const ExperienceForm = () => {
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
-                    mode="single"
-                    onSelect={(date) => handleDateChange(date, "startDate")}
-                    initialFocus
+                    value={newExperience.startDate ? new Date(newExperience.startDate) : undefined}
+                    onChange={(date) => handleDateChange(date as Date, "startDate")}
                     className="p-3"
                   />
                 </PopoverContent>
@@ -359,11 +347,10 @@ const ExperienceForm = () => {
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
-                    mode="single"
-                    onSelect={(date) => handleDateChange(date, "endDate")}
+                    value={newExperience.endDate ? new Date(newExperience.endDate) : undefined}
+                    onChange={(date) => handleDateChange(date as Date, "endDate")}
                     disabled={newExperience.current}
-                    fromDate={newExperience.startDate ? new Date(newExperience.startDate) : undefined}
-                    initialFocus
+                    minDate={newExperience.startDate ? new Date(newExperience.startDate) : undefined}
                     className="p-3"
                   />
                 </PopoverContent>

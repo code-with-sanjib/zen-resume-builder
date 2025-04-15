@@ -104,7 +104,6 @@ const ExtracurricularForm = () => {
       }
     }
     
-    // Close the popover
     setDatePopoverOpen(null);
   };
   
@@ -162,10 +161,8 @@ const ExtracurricularForm = () => {
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
-                        mode="single"
-                        selected={newActivity.startDate ? new Date(newActivity.startDate) : undefined}
-                        onSelect={(date) => handleDateChange(date, "start")}
-                        initialFocus
+                        value={newActivity.startDate ? new Date(newActivity.startDate) : undefined}
+                        onChange={(date) => handleDateChange(date as Date, "start")}
                       />
                     </PopoverContent>
                   </Popover>
@@ -195,11 +192,9 @@ const ExtracurricularForm = () => {
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
-                        mode="single"
-                        selected={newActivity.endDate ? new Date(newActivity.endDate) : undefined}
-                        onSelect={(date) => handleDateChange(date, "end")}
-                        fromDate={newActivity.startDate ? new Date(newActivity.startDate) : undefined}
-                        initialFocus
+                        value={newActivity.endDate ? new Date(newActivity.endDate) : undefined}
+                        onChange={(date) => handleDateChange(date as Date, "end")}
+                        minDate={newActivity.startDate ? new Date(newActivity.startDate) : undefined}
                       />
                     </PopoverContent>
                   </Popover>
