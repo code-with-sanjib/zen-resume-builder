@@ -146,9 +146,9 @@ const ProfessionalTemplate = ({ resume }: ResumeTemplateProps) => {
                 <div className="col-span-9">
                   <div className="flex justify-between mb-1">
                     <h3 className="font-bold">{exp.position}, {exp.company}</h3>
-                    <span className="text-sm">{exp.locationType}</span>
+                    {/* Removed locationType as it doesn't exist in the Experience interface */}
                   </div>
-                  <p className="text-sm mb-2">{exp.companyDescription}</p>
+                  {/* Removed companyDescription as it doesn't exist in the Experience interface */}
                   <div className="text-sm">
                     {exp.description && exp.description.includes('•') ? (
                       <ul className="list-disc pl-5 space-y-1">
