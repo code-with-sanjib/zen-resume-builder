@@ -1,4 +1,3 @@
-
 import { Resume } from "@/contexts/ResumeContext";
 
 interface ResumeTemplateProps {
@@ -6,7 +5,7 @@ interface ResumeTemplateProps {
 }
 
 const ModernTemplate = ({ resume }: ResumeTemplateProps) => {
-  const { personal, experience, education, skills } = resume;
+  const { personal, experience, education, skills, links } = resume;
 
   return (
     <div className="p-8 font-inter text-gray-800">
@@ -23,6 +22,26 @@ const ModernTemplate = ({ resume }: ResumeTemplateProps) => {
           {personal.website && <p className="text-primary">{personal.website}</p>}
         </div>
       </div>
+
+      {/* Links */}
+      {links && links.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-lg font-bold text-primary mb-2">LINKS</h2>
+          <div className="flex flex-wrap gap-2">
+            {links.map((link) => (
+              <a
+                key={link.id}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 transition-colors px-3 py-1.5 rounded-full text-sm"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Summary */}
       {personal.summary && (
