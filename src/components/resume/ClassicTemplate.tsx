@@ -1,4 +1,6 @@
+
 import { Resume } from "@/contexts/ResumeContext";
+import { format } from "date-fns";
 
 interface ResumeTemplateProps {
   resume: Resume;
@@ -24,7 +26,7 @@ const ClassicTemplate = ({ resume }: ResumeTemplateProps) => {
       {/* Links */}
       {links && links.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-lg font-bold border-b border-gray-300 pb-1 mb-2">Links</h2>
+          <h2 className="text-lg font-bold border-b border-gray-300 pb-1 mb-2">Social</h2>
           <div className="flex flex-wrap gap-2">
             {links.map((link) => (
               <a
@@ -44,7 +46,7 @@ const ClassicTemplate = ({ resume }: ResumeTemplateProps) => {
       {/* Summary */}
       {personal.summary && (
         <div className="mb-6">
-          <h2 className="text-lg font-bold border-b border-gray-300 pb-1 mb-2">Profile Summary</h2>
+          <h2 className="text-lg font-bold border-b border-gray-300 pb-1 mb-2">Profile</h2>
           <p className="text-sm">{personal.summary}</p>
         </div>
       )}
@@ -52,13 +54,13 @@ const ClassicTemplate = ({ resume }: ResumeTemplateProps) => {
       {/* Experience */}
       {experience.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-lg font-bold border-b border-gray-300 pb-1 mb-2">Professional Experience</h2>
+          <h2 className="text-lg font-bold border-b border-gray-300 pb-1 mb-2">Experience</h2>
           {experience.map((exp) => (
             <div key={exp.id} className="mb-4">
               <div className="flex justify-between">
                 <h3 className="font-bold text-base">{exp.position}</h3>
                 <span className="text-sm">
-                  {exp.startDate} - {exp.current ? "Present" : exp.endDate}
+                  {format(new Date(exp.startDate), "MMM yyyy")} - {exp.current ? "Present" : format(new Date(exp.endDate), "MMM yyyy")}
                 </span>
               </div>
               <p className="text-sm font-medium">{exp.company}</p>

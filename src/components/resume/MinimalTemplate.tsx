@@ -1,4 +1,6 @@
+
 import { Resume } from "@/contexts/ResumeContext";
+import { format } from "date-fns";
 
 interface ResumeTemplateProps {
   resume: Resume;
@@ -24,7 +26,7 @@ const MinimalTemplate = ({ resume }: ResumeTemplateProps) => {
       {/* Links */}
       {links && links.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-4 text-center">Links</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-4 text-center">Social</h2>
           <div className="flex flex-wrap justify-center gap-2">
             {links.map((link) => (
               <a
@@ -59,7 +61,7 @@ const MinimalTemplate = ({ resume }: ResumeTemplateProps) => {
                 <div className="text-sm text-gray-500">
                   <span className="mr-2">{exp.company}</span>
                   <span>
-                    {exp.startDate} - {exp.current ? "Present" : exp.endDate}
+                    {format(new Date(exp.startDate), "MMM yyyy")} - {exp.current ? "Present" : format(new Date(exp.endDate), "MMM yyyy")}
                   </span>
                 </div>
               </div>

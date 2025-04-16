@@ -26,7 +26,7 @@ const ResumePreview = () => {
   const previewResume = showSample ? sampleResume : resume;
   
   const renderTemplate = () => {
-    // Render the main template based on selection
+    // First render the main template based on selection
     const templateContent = (() => {
       switch (previewResume.selectedTemplate) {
         case "classic":
@@ -42,12 +42,11 @@ const ResumePreview = () => {
       }
     })();
     
-    // Add new sections after the template
+    // Add additional sections after the template, but don't include links since they're now part of the main templates
     return (
       <>
         {templateContent}
         <div className="mt-4 px-6">
-          {/* New sections */}
           {previewResume.extracurricular && previewResume.extracurricular.length > 0 && (
             <ExtracurricularSection extracurricular={previewResume.extracurricular} />
           )}
@@ -76,11 +75,6 @@ const ResumePreview = () => {
             <ProjectsSection projects={previewResume.projects} />
           )}
           
-          {previewResume.links && previewResume.links.length > 0 && (
-            <LinksSection links={previewResume.links} />
-          )}
-          
-          {/* Keep custom sections for backward compatibility */}
           {previewResume.customSections && previewResume.customSections.length > 0 && (
             <CustomSections customSections={previewResume.customSections} />
           )}

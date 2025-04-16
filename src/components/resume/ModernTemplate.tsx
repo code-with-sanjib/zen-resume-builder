@@ -1,4 +1,6 @@
+
 import { Resume } from "@/contexts/ResumeContext";
+import { format } from "date-fns";
 
 interface ResumeTemplateProps {
   resume: Resume;
@@ -23,10 +25,10 @@ const ModernTemplate = ({ resume }: ResumeTemplateProps) => {
         </div>
       </div>
 
-      {/* Links */}
+      {/* Links - Now appears before summary */}
       {links && links.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-lg font-bold text-primary mb-2">LINKS</h2>
+          <h2 className="text-lg font-bold text-primary mb-2">Social</h2>
           <div className="flex flex-wrap gap-2">
             {links.map((link) => (
               <a
@@ -46,7 +48,7 @@ const ModernTemplate = ({ resume }: ResumeTemplateProps) => {
       {/* Summary */}
       {personal.summary && (
         <div className="mb-6">
-          <h2 className="text-lg font-bold text-primary mb-2">PROFILE</h2>
+          <h2 className="text-lg font-bold text-primary mb-2">Profile</h2>
           <p className="text-sm">{personal.summary}</p>
         </div>
       )}
@@ -54,13 +56,13 @@ const ModernTemplate = ({ resume }: ResumeTemplateProps) => {
       {/* Experience */}
       {experience.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-lg font-bold text-primary mb-2">EXPERIENCE</h2>
+          <h2 className="text-lg font-bold text-primary mb-2">Experience</h2>
           {experience.map((exp) => (
             <div key={exp.id} className="mb-4">
               <div className="flex justify-between items-center">
                 <h3 className="font-bold">{exp.position}</h3>
                 <span className="text-sm bg-gray-100 px-2 py-1 rounded">
-                  {exp.startDate} - {exp.current ? "Present" : exp.endDate}
+                  {format(new Date(exp.startDate), "MMM yyyy")} - {exp.current ? "Present" : format(new Date(exp.endDate), "MMM yyyy")}
                 </span>
               </div>
               <p className="text-sm font-medium text-primary">{exp.company}</p>

@@ -12,7 +12,7 @@ const LinksSection: React.FC<LinksSectionProps> = ({ links }) => {
 
   return (
     <div className="mb-6">
-      <h3 className="text-lg font-bold border-b pb-1 mb-3">Links</h3>
+      <h2 className="text-lg font-bold border-b border-gray-300 pb-1 mb-2">Social</h2>
       <div className="flex flex-wrap gap-3">
         {links.map((link) => (
           <a 
