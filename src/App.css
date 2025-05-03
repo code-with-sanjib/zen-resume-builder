@@ -52,6 +52,8 @@
 .pagination-controls {
   margin-top: 1rem;
   margin-bottom: 1rem;
+  z-index: 20;
+  position: relative;
 }
 
 /* Mark pages for visual reference */

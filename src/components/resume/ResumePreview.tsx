@@ -126,6 +126,35 @@ const ResumePreview = () => {
     };
   };
 
+  // Pagination controls component that can be reused in both views
+  const PaginationControls = () => (
+    <div className="pagination-controls mt-4 flex justify-center items-center">
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious 
+              onClick={() => handlePageChange(currentPage - 1)}
+              className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
+            />
+          </PaginationItem>
+
+          <PaginationItem className="flex items-center">
+            <span className="text-sm mx-2">
+              {currentPage} / {totalPages}
+            </span>
+          </PaginationItem>
+
+          <PaginationItem>
+            <PaginationNext 
+              onClick={() => handlePageChange(currentPage + 1)}
+              className={currentPage >= totalPages ? "pointer-events-none opacity-50" : ""}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    </div>
+  );
+
   return (
     <div className="resume-preview overflow-hidden relative">
       <div className="sticky top-0 right-0 flex justify-end gap-2 p-2 z-10">
@@ -153,33 +182,8 @@ const ResumePreview = () => {
         </div>
       </div>
       
-      {totalPages > 1 && (
-        <div className="pagination-controls mt-4 flex justify-center items-center">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious 
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
-                />
-              </PaginationItem>
-
-              <PaginationItem className="flex items-center">
-                <span className="text-sm mx-2">
-                  {currentPage} / {totalPages}
-                </span>
-              </PaginationItem>
-
-              <PaginationItem>
-                <PaginationNext 
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  className={currentPage >= totalPages ? "pointer-events-none opacity-50" : ""}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
-      )}
+      {/* Show pagination controls in normal view for multi-page resumes */}
+      {totalPages > 1 && <PaginationControls />}
 
       <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
         <DialogContent className="max-w-[850px] h-[90vh]">
@@ -189,33 +193,8 @@ const ResumePreview = () => {
             </div>
           </div>
           
-          {totalPages > 1 && (
-            <div className="pagination-controls mt-4 flex justify-center items-center">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious 
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
-                    />
-                  </PaginationItem>
-
-                  <PaginationItem className="flex items-center">
-                    <span className="text-sm mx-2">
-                      {currentPage} / {totalPages}
-                    </span>
-                  </PaginationItem>
-
-                  <PaginationItem>
-                    <PaginationNext 
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      className={currentPage >= totalPages ? "pointer-events-none opacity-50" : ""}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
-          )}
+          {/* Show pagination controls in fullscreen dialog for multi-page resumes */}
+          {totalPages > 1 && <PaginationControls />}
         </DialogContent>
       </Dialog>
     </div>
