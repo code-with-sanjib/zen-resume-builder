@@ -1,9 +1,9 @@
 
 import { useResume } from "@/contexts/ResumeContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Expand } from "lucide-react";
+import { Expand, ChevronLeft, ChevronRight } from "lucide-react";
 import ClassicTemplate from "./ClassicTemplate";
 import ModernTemplate from "./ModernTemplate";
 import MinimalTemplate from "./MinimalTemplate";
@@ -18,13 +18,40 @@ import CoursesSection from "./sections/CoursesSection";
 import ProjectsSection from "./sections/ProjectsSection";
 import LinksSection from "./sections/LinksSection";
 import CustomSections from "./CustomSections";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { calculatePages } from "@/components/editor/ResumeExport";
 
 const ResumePreview = () => {
   const { resume } = useResume();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showSample, setShowSample] = useState(!resume.personal.fullName);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const previewResume = showSample ? sampleResume : resume;
+  
+  useEffect(() => {
+    const calculateTotalPages = async () => {
+      const element = document.querySelector(".resume-preview-content") as HTMLElement;
+      if (element) {
+        const pages = await calculatePages(element);
+        setTotalPages(pages);
+        
+        // Reset to first page when content changes
+        setCurrentPage(1);
+      }
+    };
+    
+    // Allow the content to render first
+    const timeoutId = setTimeout(calculateTotalPages, 200);
+    return () => clearTimeout(timeoutId);
+  }, [resume, showSample]);
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
   
   const renderTemplate = () => {
     // First render the main template based on selection
@@ -84,8 +111,23 @@ const ResumePreview = () => {
     );
   };
 
+  // Apply page offset styles to simulate PDF pagination in preview
+  const getPageStyle = () => {
+    if (totalPages <= 1) return {};
+    
+    // Each A4 page is approximately 1123px tall (297mm at 96 DPI)
+    // We use 1050px to account for some padding
+    const pageHeight = 1050;
+    const offsetY = (currentPage - 1) * -pageHeight;
+    
+    return {
+      transform: `translateY(${offsetY}px)`,
+      height: totalPages > 1 ? `${totalPages * pageHeight}px` : 'auto',
+    };
+  };
+
   return (
-    <div className="resume-preview overflow-auto relative">
+    <div className="resume-preview overflow-hidden relative">
       <div className="sticky top-0 right-0 flex justify-end gap-2 p-2 z-10">
         {!resume.personal.fullName && (
           <Button 
@@ -105,9 +147,39 @@ const ResumePreview = () => {
         </Button>
       </div>
 
-      <div className="resume-preview-content">
-        {renderTemplate()}
+      <div className="resume-preview-content overflow-hidden" style={{ height: totalPages > 1 ? '1050px' : 'auto' }}>
+        <div style={getPageStyle()}>
+          {renderTemplate()}
+        </div>
       </div>
+      
+      {totalPages > 1 && (
+        <div className="pagination-controls mt-4 flex justify-center items-center">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious 
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+
+              <PaginationItem className="flex items-center">
+                <span className="text-sm mx-2">
+                  {currentPage} / {totalPages}
+                </span>
+              </PaginationItem>
+
+              <PaginationItem>
+                <PaginationNext 
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  className={currentPage >= totalPages ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
 
       <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
         <DialogContent className="max-w-[850px] h-[90vh]">
@@ -116,6 +188,34 @@ const ResumePreview = () => {
               {renderTemplate()}
             </div>
           </div>
+          
+          {totalPages > 1 && (
+            <div className="pagination-controls mt-4 flex justify-center items-center">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
+                    />
+                  </PaginationItem>
+
+                  <PaginationItem className="flex items-center">
+                    <span className="text-sm mx-2">
+                      {currentPage} / {totalPages}
+                    </span>
+                  </PaginationItem>
+
+                  <PaginationItem>
+                    <PaginationNext 
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      className={currentPage >= totalPages ? "pointer-events-none opacity-50" : ""}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

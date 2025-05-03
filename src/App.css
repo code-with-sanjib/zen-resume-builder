@@ -46,7 +46,30 @@
 .resume-preview-content {
   background: white;
   width: 100%;
-  height: 100%;
+  transition: transform 0.3s ease-in-out;
+}
+
+.pagination-controls {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Mark pages for visual reference */
+@media screen {
+  .resume-preview-content {
+    position: relative;
+  }
+  
+  .resume-preview-content::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+  }
 }
 
 @media print {
@@ -69,7 +92,8 @@
   
   /* Hide UI controls in print */
   .resume-preview button,
-  .resume-preview .sticky {
+  .resume-preview .sticky,
+  .pagination-controls {
     display: none !important;
   }
 }

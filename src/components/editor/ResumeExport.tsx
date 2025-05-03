@@ -11,6 +11,55 @@ interface ResumeExportProps {
   iconOnly?: boolean;
 }
 
+export const calculatePages = async (element: HTMLElement): Promise<number> => {
+  if (!element) return 1;
+  
+  // Create a clone of the element to manipulate
+  const clonedElement = element.cloneNode(true) as HTMLElement;
+  
+  // Set up the clone for measurement - create a temporary container
+  const tempContainer = document.createElement('div');
+  tempContainer.appendChild(clonedElement);
+  document.body.appendChild(tempContainer);
+  
+  // Set styles for proper rendering
+  tempContainer.style.position = 'absolute';
+  tempContainer.style.left = '-9999px';
+  tempContainer.style.top = '-9999px';
+  clonedElement.style.transform = 'none';
+  
+  // Set fixed dimensions for A4 paper in pixels
+  clonedElement.style.width = '794px'; // A4 width at 96 DPI
+  clonedElement.style.height = 'auto'; // Let height adjust based on content
+  clonedElement.style.padding = '40px';
+  
+  // Remove any UI controls or buttons that should not be in the measurement
+  const controlsToRemove = clonedElement.querySelectorAll('.sticky, button, .pagination-controls');
+  controlsToRemove.forEach(control => {
+    (control as HTMLElement).remove();
+  });
+
+  // Use html2canvas to measure the content
+  const canvas = await html2canvas(clonedElement, {
+    scale: 2, // Higher scale for better quality
+    useCORS: true,
+    logging: false,
+    allowTaint: true,
+    backgroundColor: '#ffffff'
+  });
+  
+  // Clean up the temporary element
+  document.body.removeChild(tempContainer);
+  
+  // A4 height in points is 842, calculate how many pages we need
+  const imgWidth = 595; // A4 width in points
+  const imgHeight = canvas.height * imgWidth / canvas.width;
+  const pageHeight = 842; // A4 height in points
+  
+  // Calculate total pages, ensuring at least 1
+  return Math.max(1, Math.ceil(imgHeight / pageHeight));
+};
+
 const ResumeExport: React.FC<ResumeExportProps> = ({ iconOnly = false }) => {
   const { toast } = useToast();
   const { resume } = useResume();
@@ -44,7 +93,7 @@ const ResumeExport: React.FC<ResumeExportProps> = ({ iconOnly = false }) => {
       clonedElement.style.padding = '40px';
       
       // Remove any UI controls or buttons that should not be in the PDF
-      const controlsToRemove = clonedElement.querySelectorAll('.sticky, button');
+      const controlsToRemove = clonedElement.querySelectorAll('.sticky, button, .pagination-controls');
       controlsToRemove.forEach(control => {
         (control as HTMLElement).remove();
       });
