@@ -99,3 +99,23 @@
     display: none !important;
   }
 }
+
+/* Sidebar custom styles */
+[data-sidebar=sidebar] {
+  transition: width 0.3s ease;
+}
+
+[data-state=collapsed] [data-sidebar=sidebar] {
+  width: var(--sidebar-width-icon) !important;
+}
+
+[data-sidebar=menu-button] {
+  display: flex;
+  align-items: center;
+}
+
+[data-sidebar=menu-button] span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

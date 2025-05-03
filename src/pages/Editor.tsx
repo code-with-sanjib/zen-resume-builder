@@ -33,16 +33,29 @@ import {
   FolderKanban,
   ChevronLeft,
   ChevronRight,
-  Link as LinkIcon
+  Link as LinkIcon,
+  PanelLeft
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  SidebarProvider,
+  Sidebar,
+  SidebarContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarTrigger,
+  SidebarHeader,
+  SidebarFooter,
+  useSidebar
+} from "@/components/ui/sidebar";
 
 const Editor = () => {
   const [activeSection, setActiveSection] = useState<string>("personal");
   const { resume } = useResume();
   const isMobile = useIsMobile();
   const [showPreview, setShowPreview] = useState(!isMobile);
-
+  
   const renderActiveForm = () => {
     switch (activeSection) {
       case "personal":
@@ -80,223 +93,158 @@ const Editor = () => {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-slate-50">
-      <div className="max-w-[1600px] mx-auto p-2 sm:p-4 lg:p-6 flex flex-col">
-        {/* Mobile Action Bar */}
-        <div className="mb-4 flex items-center justify-between lg:hidden">
-          <h1 className="text-xl font-bold">Resume Builder</h1>
-          <div className="flex items-center gap-2">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="rounded-full" 
-              onClick={togglePreview}
-            >
-              {showPreview ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
-            </Button>
-            <ResumeExport iconOnly />
-          </div>
-        </div>
-        
-        <div className="flex flex-1 flex-col lg:flex-row gap-4 h-full">
-          {/* Sidebar Navigation */}
-          <div className="flex lg:flex-col lg:w-64 bg-white rounded-lg shadow-sm p-1 lg:p-0">
-            <div className="hidden lg:block px-4 py-6 border-b">
-              <h2 className="text-xl font-bold">Resume Editor</h2>
-              <p className="text-sm text-gray-500 mt-1">Build your professional resume</p>
-            </div>
-            
-            <div className="flex flex-row lg:flex-col flex-1 overflow-x-auto lg:overflow-x-visible">
-              <NavItem 
-                id="personal" 
-                label="Personal" 
-                icon={<User className="w-4 h-4" />}
-                active={activeSection === "personal"} 
-                onClick={() => setActiveSection("personal")}
-                isMobile={isMobile}
-              />
-              <NavItem 
-                id="experience" 
-                label="Experience" 
-                icon={<Briefcase className="w-4 h-4" />}
-                active={activeSection === "experience"} 
-                onClick={() => setActiveSection("experience")}
-                isMobile={isMobile}
-              />
-              <NavItem 
-                id="education" 
-                label="Education" 
-                icon={<GraduationCap className="w-4 h-4" />}
-                active={activeSection === "education"} 
-                onClick={() => setActiveSection("education")}
-                isMobile={isMobile}
-              />
-              <NavItem 
-                id="skills" 
-                label="Skills" 
-                icon={<Code className="w-4 h-4" />}
-                active={activeSection === "skills"} 
-                onClick={() => setActiveSection("skills")}
-                isMobile={isMobile}
-              />
-              <NavItem 
-                id="extracurricular" 
-                label="Activities" 
-                icon={<Award className="w-4 h-4" />}
-                active={activeSection === "extracurricular"} 
-                onClick={() => setActiveSection("extracurricular")}
-                isMobile={isMobile}
-              />
-              <NavItem 
-                id="references" 
-                label="References" 
-                icon={<Users className="w-4 h-4" />}
-                active={activeSection === "references"} 
-                onClick={() => setActiveSection("references")}
-                isMobile={isMobile}
-              />
-              <NavItem 
-                id="internships" 
-                label="Internships" 
-                icon={<BookOpen className="w-4 h-4" />}
-                active={activeSection === "internships"} 
-                onClick={() => setActiveSection("internships")}
-                isMobile={isMobile}
-              />
-              <NavItem 
-                id="languages" 
-                label="Languages" 
-                icon={<Languages className="w-4 h-4" />}
-                active={activeSection === "languages"} 
-                onClick={() => setActiveSection("languages")}
-                isMobile={isMobile}
-              />
-              <NavItem 
-                id="hobbies" 
-                label="Hobbies" 
-                icon={<Heart className="w-4 h-4" />}
-                active={activeSection === "hobbies"} 
-                onClick={() => setActiveSection("hobbies")}
-                isMobile={isMobile}
-              />
-              <NavItem 
-                id="courses" 
-                label="Courses" 
-                icon={<Bookmark className="w-4 h-4" />}
-                active={activeSection === "courses"} 
-                onClick={() => setActiveSection("courses")}
-                isMobile={isMobile}
-              />
-              <NavItem 
-                id="projects" 
-                label="Projects" 
-                icon={<FolderKanban className="w-4 h-4" />}
-                active={activeSection === "projects"} 
-                onClick={() => setActiveSection("projects")}
-                isMobile={isMobile}
-              />
-              <NavItem 
-                id="links" 
-                label="Links" 
-                icon={<LinkIcon className="w-4 h-4" />}
-                active={activeSection === "links"} 
-                onClick={() => setActiveSection("links")}
-                isMobile={isMobile}
-              />
-            </div>
-            
-            <div className="hidden lg:flex flex-col gap-2 p-4 border-t">
-              <Link to="/templates">
-                <Button variant="outline" className="w-full justify-start">
-                  <FileText className="mr-2 h-4 w-4" />
-                  Change Template
-                </Button>
-              </Link>
-              <ResumeExport />
+      <SidebarProvider defaultOpen={true}>
+        <div className="max-w-[1600px] mx-auto p-2 sm:p-4 lg:p-6 flex flex-col">
+          {/* Mobile Action Bar */}
+          <div className="mb-4 flex items-center justify-between lg:hidden">
+            <h1 className="text-xl font-bold">Resume Builder</h1>
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-full" 
+                onClick={togglePreview}
+              >
+                {showPreview ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+              </Button>
+              <ResumeExport iconOnly />
             </div>
           </div>
           
-          {/* Main Content */}
-          <div className={`flex-1 ${showPreview ? 'lg:max-w-[50%]' : 'w-full'}`}>
-            <Card className="h-full shadow-sm">
-              <CardContent className="p-4 sm:p-6 h-full overflow-auto">
-                <div className="hidden lg:flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-semibold">
-                    {activeSection === "personal" && "Personal Information"}
-                    {activeSection === "experience" && "Work Experience"}
-                    {activeSection === "education" && "Education"}
-                    {activeSection === "skills" && "Skills"}
-                    {activeSection === "extracurricular" && "Extracurricular Activities"}
-                    {activeSection === "references" && "References"}
-                    {activeSection === "internships" && "Internships"}
-                    {activeSection === "languages" && "Languages"}
-                    {activeSection === "hobbies" && "Hobbies & Interests"}
-                    {activeSection === "courses" && "Courses & Certifications"}
-                    {activeSection === "projects" && "Projects"}
-                    {activeSection === "links" && "Links"}
-                  </h3>
+          <div className="flex flex-1 flex-col lg:flex-row gap-4 h-full">
+            {/* Editor Sidebar */}
+            <EditorSidebar 
+              activeSection={activeSection} 
+              setActiveSection={setActiveSection} 
+              isMobile={isMobile} 
+            />
+            
+            {/* Main Content */}
+            <div className={`flex-1 ${showPreview ? 'lg:max-w-[50%]' : 'w-full'}`}>
+              <Card className="h-full shadow-sm">
+                <CardContent className="p-4 sm:p-6 h-full overflow-auto">
+                  <div className="hidden lg:flex justify-between items-center mb-6">
+                    <h3 className="text-xl font-semibold">
+                      {activeSection === "personal" && "Personal Information"}
+                      {activeSection === "experience" && "Work Experience"}
+                      {activeSection === "education" && "Education"}
+                      {activeSection === "skills" && "Skills"}
+                      {activeSection === "extracurricular" && "Extracurricular Activities"}
+                      {activeSection === "references" && "References"}
+                      {activeSection === "internships" && "Internships"}
+                      {activeSection === "languages" && "Languages"}
+                      {activeSection === "hobbies" && "Hobbies & Interests"}
+                      {activeSection === "courses" && "Courses & Certifications"}
+                      {activeSection === "projects" && "Projects"}
+                      {activeSection === "links" && "Links"}
+                    </h3>
+                    
+                    {isMobile && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={togglePreview}
+                      >
+                        {showPreview ? "Hide Preview" : "Show Preview"}
+                        {showPreview ? <ChevronRight className="ml-2 w-4 h-4" /> : <ChevronLeft className="ml-2 w-4 h-4" />}
+                      </Button>
+                    )}
+                  </div>
                   
-                  {isMobile && (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={togglePreview}
-                    >
-                      {showPreview ? "Hide Preview" : "Show Preview"}
-                      {showPreview ? <ChevronRight className="ml-2 w-4 h-4" /> : <ChevronLeft className="ml-2 w-4 h-4" />}
-                    </Button>
-                  )}
+                  {renderActiveForm()}
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* Preview Section */}
+            {showPreview && (
+              <div className="lg:w-1/2 flex flex-col">
+                <div className="hidden lg:flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold">Resume Preview</h2>
+                  <ResumeExport />
                 </div>
                 
-                {renderActiveForm()}
-              </CardContent>
-            </Card>
-          </div>
-          
-          {/* Preview Section */}
-          {showPreview && (
-            <div className="lg:w-1/2 flex flex-col">
-              <div className="hidden lg:flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold">Resume Preview</h2>
-                <ResumeExport />
-              </div>
-              
-              <div className="bg-white rounded-lg shadow-sm flex-1 flex flex-col">
-                <div className="flex-1 flex justify-center items-center p-4 overflow-auto">
-                  <div className="transform scale-75 sm:scale-80 md:scale-85 lg:scale-90 xl:scale-95 2xl:scale-100 origin-top">
-                    <ResumePreview />
+                <div className="bg-white rounded-lg shadow-sm flex-1 flex flex-col">
+                  <div className="flex-1 flex justify-center items-center p-4 overflow-auto">
+                    <div className="transform scale-75 sm:scale-80 md:scale-85 lg:scale-90 xl:scale-95 2xl:scale-100 origin-top">
+                      <ResumePreview />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
+      </SidebarProvider>
     </div>
   );
 };
 
-interface NavItemProps {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-  active: boolean;
-  onClick: () => void;
+// Separated EditorSidebar component
+interface EditorSidebarProps {
+  activeSection: string;
+  setActiveSection: (section: string) => void;
   isMobile: boolean;
 }
 
-const NavItem: React.FC<NavItemProps> = ({ id, label, icon, active, onClick, isMobile }) => {
+const EditorSidebar = ({ activeSection, setActiveSection, isMobile }: EditorSidebarProps) => {
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
+
+  const menuItems = [
+    { id: "personal", label: "Personal", icon: <User className="w-4 h-4" /> },
+    { id: "experience", label: "Experience", icon: <Briefcase className="w-4 h-4" /> },
+    { id: "education", label: "Education", icon: <GraduationCap className="w-4 h-4" /> },
+    { id: "skills", label: "Skills", icon: <Code className="w-4 h-4" /> },
+    { id: "extracurricular", label: "Activities", icon: <Award className="w-4 h-4" /> },
+    { id: "references", label: "References", icon: <Users className="w-4 h-4" /> },
+    { id: "internships", label: "Internships", icon: <BookOpen className="w-4 h-4" /> },
+    { id: "languages", label: "Languages", icon: <Languages className="w-4 h-4" /> },
+    { id: "hobbies", label: "Hobbies", icon: <Heart className="w-4 h-4" /> },
+    { id: "courses", label: "Courses", icon: <Bookmark className="w-4 h-4" /> },
+    { id: "projects", label: "Projects", icon: <FolderKanban className="w-4 h-4" /> },
+    { id: "links", label: "Links", icon: <LinkIcon className="w-4 h-4" /> },
+  ];
+
   return (
-    <button
-      className={`flex items-center px-3 py-2 lg:px-4 lg:py-3 rounded-md transition-colors whitespace-nowrap ${
-        active 
-          ? "bg-primary/10 text-primary" 
-          : "text-gray-600 hover:bg-gray-100"
-      }`}
-      onClick={onClick}
-    >
-      {icon}
-      <span className={`${isMobile ? "hidden" : "ml-3"} lg:ml-3 lg:block`}>{label}</span>
-    </button>
+    <Sidebar collapsible="icon" className="border-0">
+      <SidebarHeader className="flex items-center justify-between p-4">
+        <div className="flex items-center">
+          <FileText className="w-5 h-5 text-primary mr-2" />
+          <span className="font-bold text-lg">Resume Editor</span>
+        </div>
+        <SidebarTrigger className="ml-2" />
+      </SidebarHeader>
+      
+      <SidebarContent>
+        <SidebarMenu>
+          {menuItems.map((item) => (
+            <SidebarMenuItem key={item.id}>
+              <SidebarMenuButton
+                isActive={activeSection === item.id}
+                onClick={() => setActiveSection(item.id)}
+                tooltip={item.label}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarContent>
+      
+      <SidebarFooter className="p-4">
+        <Link to="/templates">
+          <Button variant="outline" size={isCollapsed ? "icon" : "default"} className="w-full">
+            <FileText className="w-4 h-4" />
+            {!isCollapsed && <span className="ml-2">Change Template</span>}
+          </Button>
+        </Link>
+        <div className="mt-2">
+          <ResumeExport iconOnly={isCollapsed} />
+        </div>
+      </SidebarFooter>
+    </Sidebar>
   );
 };
 
