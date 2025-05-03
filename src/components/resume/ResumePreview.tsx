@@ -1,3 +1,4 @@
+
 import { useResume } from "@/contexts/ResumeContext";
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -104,7 +105,9 @@ const ResumePreview = () => {
         </Button>
       </div>
 
-      {renderTemplate()}
+      <div className="resume-preview-content">
+        {renderTemplate()}
+      </div>
 
       <Dialog open={isFullscreen} onOpenChange={setIsFullscreen}>
         <DialogContent className="max-w-[850px] h-[90vh]">
