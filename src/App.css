@@ -100,9 +100,11 @@
   }
 }
 
-/* Sidebar custom styles */
+/* Enhanced sidebar custom styles */
 [data-sidebar=sidebar] {
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, transform 0.3s ease;
+  border-right: 1px solid #e2e8f0;
+  background-color: white;
 }
 
 [data-state=collapsed] [data-sidebar=sidebar] {
@@ -112,10 +114,61 @@
 [data-sidebar=menu-button] {
   display: flex;
   align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+[data-sidebar=menu-button][data-active=true] {
+  background-color: #f1f5f9;
+  border-left: 3px solid #9b87f5;
+  font-weight: 500;
+}
+
+/* Better hover effects for sidebar items */
+[data-sidebar=menu-button]:hover:not([data-active=true]) {
+  background-color: #f8fafc;
 }
 
 [data-sidebar=menu-button] span {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Editor content layout styles */
+.editor-content-wrapper {
+  display: flex;
+  flex: 1;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.editor-form-container {
+  flex: 1;
+  min-width: 0;
+  transition: all 0.3s ease;
+}
+
+.preview-container {
+  flex: 1;
+  min-width: 0;
+  transition: all 0.3s ease;
+  background-color: #f8fafc;
+}
+
+/* When sidebar is collapsed, adjust other containers */
+[data-state=collapsed] ~ .editor-content-wrapper .editor-form-container,
+[data-state=collapsed] ~ .editor-content-wrapper .preview-container {
+  flex: 1;
+}
+
+/* Adjust padding for different screen sizes */
+@media (max-width: 768px) {
+  .editor-content-wrapper {
+    flex-direction: column;
+  }
+  
+  .editor-form-container,
+  .preview-container {
+    width: 100%;
+  }
 }
